@@ -64,9 +64,9 @@ public class GUI {
 		frmCvia.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		frmCvia.getContentPane().setLayout(gridBagLayout);
 
 		JLabel lblFilesOpened = new JLabel("Files Open:");
@@ -103,12 +103,28 @@ public class GUI {
 		gbc_textAreaContents.gridx = 1;
 		gbc_textAreaContents.gridy = 1;
 		frmCvia.getContentPane().add(textAreaContents, gbc_textAreaContents);
+		
+		JLabel lblKeyWords = new JLabel("Key words");
+		GridBagConstraints gbc_lblKeyWords = new GridBagConstraints();
+		gbc_lblKeyWords.insets = new Insets(0, 0, 5, 5);
+		gbc_lblKeyWords.gridx = 0;
+		gbc_lblKeyWords.gridy = 2;
+		frmCvia.getContentPane().add(lblKeyWords, gbc_lblKeyWords);
+		
+		JTextArea textAreaKeyWords = new JTextArea();
+		GridBagConstraints gbc_textAreaKeyWords = new GridBagConstraints();
+		gbc_textAreaKeyWords.gridwidth = 3;
+		gbc_textAreaKeyWords.insets = new Insets(0, 0, 5, 0);
+		gbc_textAreaKeyWords.fill = GridBagConstraints.BOTH;
+		gbc_textAreaKeyWords.gridx = 1;
+		gbc_textAreaKeyWords.gridy = 2;
+		frmCvia.getContentPane().add(textAreaKeyWords, gbc_textAreaKeyWords);
 
 		JButton buttonBrowse = new JButton("Browse");
 		GridBagConstraints gbc_buttonBrowse = new GridBagConstraints();
 		gbc_buttonBrowse.insets = new Insets(0, 0, 0, 5);
 		gbc_buttonBrowse.gridx = 0;
-		gbc_buttonBrowse.gridy = 2;
+		gbc_buttonBrowse.gridy = 3;
 		frmCvia.getContentPane().add(buttonBrowse, gbc_buttonBrowse);
 		buttonBrowse.addActionListener(new ActionListener() {
 			@Override
@@ -126,8 +142,7 @@ public class GUI {
 					}
 					//textAreaFilesOpen.setText(c.getSelectedFile().getName());
 					textAreaFilesOpen.setText(openFileList);
-					
-					
+
 					try {
 						List<String> contents = new ArrayList<String>();
 						for (int i = 0; i < files.length; i++) {
@@ -135,7 +150,7 @@ public class GUI {
 							textAreaContents.setText(contents.get(i));
 						}
 						//textAreaContents.setText(contents);
-						GUIModel.processOpenFiles(contents);
+						GUIModel.saveContentsOfOpenFiles(contents);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -152,13 +167,20 @@ public class GUI {
 		GridBagConstraints gbc_buttonAnalyze = new GridBagConstraints();
 		gbc_buttonAnalyze.insets = new Insets(0, 0, 0, 5);
 		gbc_buttonAnalyze.gridx = 2;
-		gbc_buttonAnalyze.gridy = 2;
+		gbc_buttonAnalyze.gridy = 3;
 		frmCvia.getContentPane().add(buttonAnalyze, gbc_buttonAnalyze);
+		buttonAnalyze.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIModel.startProcessing(textAreaKeyWords.getText());
+			}
+		});
+
 
 		JButton buttonSaveResults = new JButton("Save Results");
 		GridBagConstraints gbc_buttonSaveResults = new GridBagConstraints();
 		gbc_buttonSaveResults.gridx = 3;
-		gbc_buttonSaveResults.gridy = 2;
+		gbc_buttonSaveResults.gridy = 3;
 		frmCvia.getContentPane().add(buttonSaveResults, gbc_buttonSaveResults);
 		buttonSaveResults.addActionListener(new ActionListener() {
 			@Override
