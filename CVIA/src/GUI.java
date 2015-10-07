@@ -28,7 +28,7 @@ import java.util.Scanner;
 public class GUI {
 
 	private JFrame frmCvia;
-
+	private Parser parser= new Parser();
 	/**
 	 * Launch the application.
 	 */
@@ -74,7 +74,7 @@ public class GUI {
 		gbc_lblFilesOpened.gridy = 0;
 		frmCvia.getContentPane().add(lblFilesOpened, gbc_lblFilesOpened);
 
-		JTextArea textAreaFilesOpen = new JTextArea();
+		final JTextArea textAreaFilesOpen = new JTextArea();
 		textAreaFilesOpen.setLineWrap(true);
 		textAreaFilesOpen.setRows(2);
 		GridBagConstraints gbc_textAreaFilesOpen = new GridBagConstraints();
@@ -92,7 +92,7 @@ public class GUI {
 		gbc_lblContents.gridy = 1;
 		frmCvia.getContentPane().add(lblContents, gbc_lblContents);
 
-		JTextArea textAreaContents = new JTextArea();
+		final JTextArea textAreaContents = new JTextArea();
 		textAreaContents.setLineWrap(true);
 		GridBagConstraints gbc_textAreaContents = new GridBagConstraints();
 		gbc_textAreaContents.gridwidth = 3;
@@ -120,6 +120,7 @@ public class GUI {
 					File[] files = c.getSelectedFiles();
 					String openFileList= ""; 
 					for (int i = 0; i < files.length; i++) {
+						parser.ParseCV(files[i].toString());
 						openFileList = openFileList.concat(files[i].toString() + "\n"); 
 					}
 					
