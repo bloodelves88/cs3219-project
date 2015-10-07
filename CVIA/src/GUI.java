@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -122,17 +124,18 @@ public class GUI {
 					for (int i = 0; i < files.length; i++) {
 						openFileList = openFileList.concat(files[i].toString() + "\n"); 
 					}
-					
 					//textAreaFilesOpen.setText(c.getSelectedFile().getName());
 					textAreaFilesOpen.setText(openFileList);
-					textAreaContents.setText(c.getCurrentDirectory().toString());
+					
 					
 					try {
-						String[] contents = null;
+						List<String> contents = new ArrayList<String>();
 						for (int i = 0; i < files.length; i++) {
-							contents[i] = readFile(files[i].toString()); // contents of files here
+							contents.add(readFile(files[i].toString())); // contents of files here
+							textAreaContents.setText(contents.get(i));
 						}
 						//textAreaContents.setText(contents);
+						GUIModel.processOpenFiles(contents);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -173,7 +176,8 @@ public class GUI {
 					try {
 						writer = new BufferedWriter(new OutputStreamWriter(
 								new FileOutputStream(filepath), "utf-8"));
-						String content = textAreaContents.getText().replaceAll("(?!\\r)\\n", "\r\n"); // saving contents here
+						//String content = textAreaContents.getText().replaceAll("(?!\\r)\\n", "\r\n"); // saving contents here
+						String content = GUIModel.saveData();
 						writer.write(content);
 					} catch (IOException ex) {
 						// report
