@@ -111,7 +111,7 @@ public class GUI {
 		gbc_lblKeyWords.gridy = 2;
 		frmCvia.getContentPane().add(lblKeyWords, gbc_lblKeyWords);
 		
-		JTextArea textAreaKeyWords = new JTextArea();
+		final JTextArea textAreaKeyWords = new JTextArea();
 		GridBagConstraints gbc_textAreaKeyWords = new GridBagConstraints();
 		gbc_textAreaKeyWords.gridwidth = 3;
 		gbc_textAreaKeyWords.insets = new Insets(0, 0, 5, 0);

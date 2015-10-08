@@ -9,32 +9,97 @@ import javax.imageio.ImageIO;
 import java.util.Scanner;
 
 public class TextRetrieval {
-	//Assumption that all images have tags. Need to clarify
 
-	private String imageAndtags="";
-	private LinkedList<String> listOfTags= new LinkedList<String>();
-	private LinkedList<String> listOfImages= new LinkedList<String>();
 	private ST<String,Set<String>> directIndex = new ST<String,Set<String>>() ; 
 	private ST<String,Set<String>> invertedIndex = new ST<String,Set<String>>();
-	private ST<String,Set<String>> queryIndex = new ST<String,Set<String>>();
 	private Set<String> queryTagSet,queryImageSet;
 	private Map<String,Integer> occuranceMap=new HashMap<String,Integer>();
 	private Map<String,Integer> resultMap=new HashMap<String,Integer>();
 	private int count=0;
-	public void LoadIndexes(String tagspath)
+	
+	//Possible loading of stored terms
+	public void LoadTerms()
 	{
-		String imagesPath= tagspath + "train_tags.txt";
-		String queryPath=tagspath.substring(0,tagspath.length()-6)+"test\\test_tags.txt";
+		String textPath= System.getProperty("user.dir") + "\\terms\\terms.txt";
 		try{
-			LoadImagesTags(imagesPath,directIndex);
-			CreateInvertedIndex();
-			LoadImagesTags(queryPath,queryIndex);
+			LoadTerms(textPath,invertedIndex);
 		}catch(IOException e1)
     	{
     		e1.printStackTrace();
     	}
 	}
 	
+	//Adds the file to the directIndex
+	public void AddFile(String fileName, String[] fileTerms)
+	{		
+		if(!directIndex.contains(fileName))
+		{
+			Set<String> fileSet=new HashSet<String>(Arrays.asList(fileTerms));
+			directIndex.put(fileName, fileSet);
+		}else
+		{
+			Set<String> previousFileSet=directIndex.get(fileName);
+			for(int i=0;i<fileTerms.length;i++)
+			{
+				if(!previousFileSet.contains(fileTerms[i]))
+				{
+					previousFileSet.add(fileTerms[i]);
+				}
+			}
+			directIndex.delete(fileName);
+			directIndex.put(fileName, previousFileSet);
+			UpdateInvertedIndex(fileName,fileTerms);
+		}
+	}
+	
+	//Loads terms into given index
+	//Precondition: Text file given has terms separated by newline
+	//Postcondition: Index is loaded
+	private void LoadTerms(String tagspath,ST<String,Set<String>> index) throws IOException
+	{
+		File fr = new File(tagspath);
+		String tags="";
+		try{
+			Scanner txtFile = new Scanner(fr);
+		
+			while(txtFile.hasNextLine())
+			{
+				tags=txtFile.nextLine();
+				Set<String> mySet= new HashSet<String>(null);
+				index.put(tags, mySet);
+			}
+			txtFile.close();
+		}catch(FileNotFoundException e)
+		{
+			 e.printStackTrace();
+		}
+	}
+		
+	private void UpdateInvertedIndex(String fileName,String[] fileSet)
+	{
+		LinkedList<String> listofTerms= new LinkedList<String>();
+		for(int i=0;i<fileSet.length;i++)
+			{
+				if(!invertedIndex.contains(fileSet[i]))
+				{
+					listofTerms.add(fileName);
+					Set<String> imageSet = new HashSet<String>(listofTerms);
+					invertedIndex.put(fileSet[i], imageSet);
+				}
+				else
+				{
+					Set<String> retrievedImageSet=invertedIndex.get(fileSet[i]);
+					if(!retrievedImageSet.contains(fileName))
+					{
+						retrievedImageSet.add(fileName);
+						invertedIndex.delete(fileSet[i]);
+						invertedIndex.put(fileSet[i], retrievedImageSet);
+					}
+				}
+				listofTerms.clear();
+			}
+	}
+
 	/* private double CosineSimilarity(String[] database,String[]query)
 	{
 		int commonTerms=0;
@@ -48,138 +113,7 @@ public class TextRetrieval {
 		return (commonTerms)/(Math.sqrt(database.length^2+query.length^2));
 	}
 	 */
-	//Retrival without inverted index
-	/* 	public BufferedImage[] matching(String imagename,int resultSize,String path)
-	{
-		double result=0;
-		String[] tempResults=new String[directIndex.size()];
-		System.out.println(tempResults.length);
-		String[] results=new String[resultSize];
-		int counter=0;
-		if(queryIndex.contains(imagename))
-		{
-			queryTagSet=queryIndex.get(imagename);
-			String[] queryTags=queryTagSet.toArray(new String[queryTagSet.size()]);
-			double[] indexes=new double[directIndex.size()];
-			for(String str:directIndex.keys())
-			{
-				result=CosineSimilarity(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),queryTags);
-				if (counter == 0){
-					tempResults[counter] = str;
-					indexes [counter] = result;
-				}
-				else {
-					int index;
-					for (index =0; index < counter; index ++){
-						if (result > indexes[counter])
-							break;
-					}
-					for (int j = counter - 1; j > index - 1; j--){
-						tempResults [j+1] = tempResults [j];
-						indexes [j+1] = indexes[j];
-					}
-					tempResults[index] = str;
-					indexes[index] = result;
-				}
-				counter++;
-			}
-			for(int i=0;i<resultSize;i++)
-			{
-				results[i]=tempResults[i];
-			}
-			return findFiles(results,path);
-		}
-		else
-		{
-			return null;
-		}
-		
-	} */
-	
-	public BufferedImage[] matching(String imagename,int resultSize,String path)
-	{
-		if(queryIndex.contains(imagename))
-		{
-			queryTagSet=queryIndex.get(imagename);
-			for(String str:queryTagSet)
-			{
-				if(invertedIndex.contains(str))
-				{
-					queryImageSet=invertedIndex.get(str);
-					for (String s:queryImageSet)
-					{
-						if(occuranceMap.containsKey(s))
-						{
-							occuranceMap.put(s, occuranceMap.get(s)+1);
-						}
-						else
-						{
-							occuranceMap.put(s,1);
-						}
-					}
-				}
-			}
-			resultMap=sortByComparator(occuranceMap);
-			count=0;
-			String[] results=new String[resultSize];
-			for(String str: resultMap.keySet())
-			{
-				if(count<resultSize)
-				{
-					results[count]=str;
-					count++;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			return findFiles(results,path);
-		}
-		else
-		{
-			return null;
-		}
-		
-	}
-	
-	private BufferedImage[] findFiles(String[] results, String path)
-	{
-		BufferedImage[] imgs = new BufferedImage[results.length];
-		String inputDatasetpath="",categoryNames = "";
-		File category_names = new File(path.substring(0,path.lastIndexOf("train"))+ "category_names.txt");
-		int counter=0;
-		System.out.println(category_names);
-    	try {
-	        Scanner txtFile = new Scanner(category_names);
-
-	        while (txtFile.hasNextLine() && counter<results.length) {
-	        	categoryNames = txtFile.next();
-	        	inputDatasetpath = path + categoryNames;
-	        	
-	        	File dir = new File(inputDatasetpath);  //path of the dataset
-	    		File [] files = dir.listFiles();
-				for(int i=0;i<files.length;i++)
-				{
-					String str=files[i].toString().substring(files[i].toString().lastIndexOf("\\")+1,files[i].toString().length());
-					if(str.equals(results[counter]))
-					{
-						imgs[counter] = ImageIO.read(files[i]);
-						counter++;
-						txtFile = new Scanner(category_names);
-						break;
-					}
-				}
-	        }
-	        txtFile.close();
-    	}catch(IOException e)
-	    {
-    		System.out.println(e);
-	    }
-    	return imgs;
-	}
-	
+			
 	private static Map<String, Integer> sortByComparator(Map<String, Integer> unsortMap) {
 
 		// Convert Map to List
@@ -203,57 +137,13 @@ public class TextRetrieval {
 		return sortedMap;
 	}
 	
-	public void LoadImagesTags(String tagspath,ST<String,Set<String>> index) throws IOException
+	public String[] getDocumentsByTerm(String term)
 	{
-		File fr = new File(tagspath);
-
-		try{
-			Scanner txtFile = new Scanner(fr);
-		
-			while(txtFile.hasNextLine())
-			{
-				imageAndtags=txtFile.nextLine();
-				String[] result= imageAndtags.split("\\s+");
-				for(int j=1;j<result.length;j++)
-				{
-					listOfTags.add(result[j]);
-				}
-				Set<String> mySet= new HashSet<String>(listOfTags);
-				index.put(result[0], mySet);
-				listOfTags.clear();
-			}
-			txtFile.close();
-		}catch(FileNotFoundException e)
-		{
-			 e.printStackTrace();
-		}
+		return invertedIndex.get(term).toArray(new String[invertedIndex.get(term).size()]);
 	}
 	
-	private void CreateInvertedIndex()
+	public String[] getTermsByDocument(String term)
 	{
-		Iterable<String> keySet=directIndex.keys();
-		Set<String> valueSet;
-		for(String str: keySet)
-		{
-			valueSet=directIndex.get(str);	
-			String[] tags=valueSet.toArray(new String [valueSet.size()]);
-			for(int i=0;i<tags.length;i++)
-			{
-				if(!invertedIndex.contains(tags[i]))
-				{
-					listOfImages.add(str);
-					Set<String> imageSet = new HashSet<String>(listOfImages);
-					invertedIndex.put(tags[i], imageSet);
-				}
-				else
-				{
-					Set<String> retrievedImageSet=invertedIndex.get(tags[i]);
-					retrievedImageSet.add(str);
-					invertedIndex.delete(tags[i]);
-					invertedIndex.put(tags[i], retrievedImageSet);
-				}
-				listOfImages.clear();
-			}
-		}
+		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
 	}
 }
