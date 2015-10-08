@@ -11,7 +11,6 @@ import java.awt.GridBagConstraints;
 import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-import javax.swing.JTextField;
 
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -129,19 +128,18 @@ public class GUI {
 		buttonBrowse.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				JFileChooser c = new JFileChooser();
-				// Demonstrate "Open" dialog:
 				c.setMultiSelectionEnabled(true); // returns a array of File objects
 				int rVal = c.showOpenDialog(null);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
-					String openFileList= ""; 
+					String openFileList= ""; // list of open files (shown in the GUI)
 					for (int i = 0; i < files.length; i++) {
 						System.out.println(files[i].toString());
-						parser.writeTexttoFile(parser.pdftoText(files[i].toString()),"pdfoutput" + i +".txt");
+						files[i] = GUIModel.parsePDFFiles(files[i], i);
+						//parser.writeTexttoFile(parser.pdftoText(files[i].toString()),"pdfoutput" + i +".txt");
 						openFileList = openFileList.concat(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt" + "\n");
-						files[i]=new File(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt");
+						//files[i]= new File(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt");
 					}
 					//textAreaFilesOpen.setText(c.getSelectedFile().getName());
 					textAreaFilesOpen.setText(openFileList);
@@ -150,12 +148,10 @@ public class GUI {
 						List<String> contents = new ArrayList<String>();
 						for (int i = 0; i < files.length; i++) {
 							contents.add(readFile(files[i].toString())); // contents of files here
-							textAreaContents.setText(contents.get(i));
+							textAreaContents.setText(contents.get(i)); // for demo/testing purpose
 						}
-						//textAreaContents.setText(contents);
-						GUIModel.saveContentsOfOpenFiles(contents);
+						GUIModel.storeContentsOfOpenFiles(contents);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -201,8 +197,7 @@ public class GUI {
 					try {
 						writer = new BufferedWriter(new OutputStreamWriter(
 								new FileOutputStream(filepath), "utf-8"));
-						//String content = textAreaContents.getText().replaceAll("(?!\\r)\\n", "\r\n"); // saving contents here
-						String content = GUIModel.saveData();
+						String content = GUIModel.saveDataToTextFile();
 						writer.write(content);
 					} catch (IOException ex) {
 						// report
