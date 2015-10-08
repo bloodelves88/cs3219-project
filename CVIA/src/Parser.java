@@ -1,17 +1,82 @@
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.pdfbox.cos.*;
+import org.apache.pdfbox.pdfparser.*;
+import org.apache.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import java.io.PrintWriter;
+
 public class Parser {
-	public void ParseCV(String path)
-	{
+
+		NonSequentialPDFParser parser;
+		String parsedText;
+		PDFTextStripper pdfStripper;
+		PDDocument pdDoc;
+		COSDocument cosDoc;
+		PDDocumentInformation pdDocInfo;
+		
+		// PDFTextParser Constructor 
+		public Parser() {
+		}
+		
+		// Extract text from PDF Document
+		public String pdftoText(String fileName) {
+		   
+		System.out.println("Parsing text from PDF file " + fileName + "....");
+		File f = new File(fileName);
 		try {
-			System.out.println("Working Directory = " + System.getProperty("user.dir"));
-			String directory=System.getProperty("user.dir");
-			System.out.println("python "+directory+"\\pdfminer\\tools\\pdf2txt.py "+ path + ">pdfoutput.txt");
-			Process p=Runtime.getRuntime().exec("python "+ directory +"\\pdfminer\\tools\\pdf2txt.py "+ path + ">pdfoutput.txt");
-			p.waitFor();
+			PDDocument pdDocument= PDDocument.loadNonSeq(f,null);  
+		if (!f.isFile()) {
+			System.out.println("File " + fileName + " does not exist.");
+            return null;
+		}
+		  
+		try {
+			parser = new NonSequentialPDFParser(new FileInputStream(f));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			System.out.println("Unable to open PDF Parser.");
+			return null;
+		}
+		   
+		try {
+			//parser.parse();
+			cosDoc = pdDocument.getDocument();
+			pdfStripper = new PDFTextStripper();
+			pdDoc = new PDDocument(cosDoc);
+			parsedText = pdfStripper.getText(pdDoc);
+		} catch (Exception e) {
+			System.out.println("An exception occured in parsing the PDF Document.");
 			e.printStackTrace();
+			try {
+				if (cosDoc != null) cosDoc.close();
+				if (pdDoc != null) pdDoc.close();
+			} catch (Exception e1) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} 
+			System.out.println("Done.");
+			return parsedText;
+		}
+		// Write the parsed text from PDF to a file
+		void writeTexttoFile(String pdfText, String fileName) {
+		  
+			System.out.println("\nWriting PDF text to output text file " + fileName + "....");
+			try {
+				PrintWriter pw = new PrintWriter(fileName);
+				pw.print(pdfText);
+				pw.close();  
+			} catch (Exception e) {
+				System.out.println("An exception occured in writing the pdf text to file.");
+				e.printStackTrace();
+		         }
 		}
 	}
-}

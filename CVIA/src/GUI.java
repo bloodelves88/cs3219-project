@@ -120,8 +120,10 @@ public class GUI {
 					File[] files = c.getSelectedFiles();
 					String openFileList= ""; 
 					for (int i = 0; i < files.length; i++) {
-						parser.ParseCV(files[i].toString());
-						openFileList = openFileList.concat(files[i].toString() + "\n"); 
+						System.out.println(files[i].toString());
+						parser.writeTexttoFile(parser.pdftoText(files[i].toString()),"pdfoutput" + i +".txt");
+						openFileList = openFileList.concat(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt" + "\n");
+						files[i]=new File(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt");
 					}
 					
 					//textAreaFilesOpen.setText(c.getSelectedFile().getName());
