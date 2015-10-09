@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 
 import java.awt.GridBagConstraints;
 
@@ -88,20 +89,20 @@ public class GUI {
 		gbc_lblFilesOpened.gridx = 1;
 		gbc_lblFilesOpened.gridy = 1;
 		frmCvia.getContentPane().add(lblFilesOpened, gbc_lblFilesOpened);
-
+		
 		final JTextArea textAreaFilesOpen = new JTextArea();
 		textAreaFilesOpen.setEditable(false);
 		textAreaFilesOpen.setLineWrap(true);
 		textAreaFilesOpen.setRows(2);
+		textAreaFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(textAreaFilesOpen);
 		GridBagConstraints gbc_textAreaFilesOpen = new GridBagConstraints();
 		gbc_textAreaFilesOpen.gridwidth = 5;
 		gbc_textAreaFilesOpen.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaFilesOpen.fill = GridBagConstraints.BOTH;
 		gbc_textAreaFilesOpen.gridx = 1;
 		gbc_textAreaFilesOpen.gridy = 2;
-		frmCvia.getContentPane().add(textAreaFilesOpen, gbc_textAreaFilesOpen);
-		textAreaFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-
+		frmCvia.getContentPane().add(textAreaFilesOpenScrollPane, gbc_textAreaFilesOpen);
 
 		JLabel lblJob = new JLabel("Job:");
 		lblJob.setHorizontalAlignment(SwingConstants.LEFT);
@@ -125,8 +126,10 @@ public class GUI {
 		gbc_textAreaKeyWords.fill = GridBagConstraints.BOTH;
 		gbc_textAreaKeyWords.gridx = 1;
 		gbc_textAreaKeyWords.gridy = 6;
-		frmCvia.getContentPane().add(textAreaKeyWords, gbc_textAreaKeyWords);
 		textAreaKeyWords.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		JScrollPane textAreaKeyWordsScrollPane = new JScrollPane(textAreaKeyWords);
+		frmCvia.getContentPane().add(textAreaKeyWordsScrollPane, gbc_textAreaKeyWords);
+		
 
 		JComboBox<String> comboBox = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();

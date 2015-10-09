@@ -1,4 +1,4 @@
-package snowballstemmer;
+//package snowballstemmer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
