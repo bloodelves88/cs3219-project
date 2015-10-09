@@ -18,11 +18,10 @@ public class TextRetrieval {
 	private int count=0;
 	
 	//Possible loading of stored terms
-	public void LoadTerms()
+	public void LoadTerms(String path)
 	{
-		String textPath= System.getProperty("user.dir") + "\\terms\\terms.txt";
 		try{
-			LoadTerms(textPath,invertedIndex);
+			LoadTerms(path,invertedIndex);
 		}catch(IOException e1)
     	{
     		e1.printStackTrace();
@@ -65,8 +64,11 @@ public class TextRetrieval {
 			while(txtFile.hasNextLine())
 			{
 				tags=txtFile.nextLine();
-				Set<String> mySet= new HashSet<String>(null);
-				index.put(tags, mySet);
+				if(!index.contains(tags))
+				{
+					Set<String> mySet= new HashSet<String>(null);
+					index.put(tags, mySet);
+				}
 			}
 			txtFile.close();
 		}catch(FileNotFoundException e)
@@ -100,41 +102,17 @@ public class TextRetrieval {
 			}
 	}
 
-	/* private double CosineSimilarity(String[] database,String[]query)
+	private double CosineSimilarity(String[] fileTerms,String[]terms)
 	{
 		int commonTerms=0;
-		for(int i=0;i<query.length;i++)
+		for(int i=0;i<terms.length;i++)
 		{
-			if(Arrays.asList(database).contains(query[i]))
+			if(Arrays.asList(fileTerms).contains(terms[i]))
 			{
 				commonTerms++;
 			}
 		}
-		return (commonTerms)/(Math.sqrt(database.length^2+query.length^2));
-	}
-	 */
-			
-	private static Map<String, Integer> sortByComparator(Map<String, Integer> unsortMap) {
-
-		// Convert Map to List
-		List<Map.Entry<String, Integer>> list = 
-			new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
-
-		// Sort list with comparator, to compare the Map values
-		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-			public int compare(Map.Entry<String, Integer> o1,
-                                           Map.Entry<String, Integer> o2) {
-				return (o2.getValue()).compareTo(o1.getValue());
-			}
-		});
-
-		// Convert sorted map back to a Map
-		Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
-		for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
-			Map.Entry<String, Integer> entry = it.next();
-			sortedMap.put(entry.getKey(), entry.getValue());
-		}
-		return sortedMap;
+		return (commonTerms)/(Math.sqrt(fileTerms.length^2+terms.length^2));
 	}
 	
 	public String[] getDocumentsByTerm(String term)
@@ -145,5 +123,35 @@ public class TextRetrieval {
 	public String[] getTermsByDocument(String term)
 	{
 		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
+	}
+	public String[] getWeightedResults(String[] terms)
+	{
+		String[] results=new String[directIndex.size()];
+		double[] indexes=new double[directIndex.size()];
+		int counter=0;
+		double similarity=0;
+		for(String str:directIndex.keys())
+		{
+			similarity=CosineSimilarity(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+			if (counter == 0){
+				results[counter] = str;
+				indexes [counter] = similarity;
+			}
+			else {
+				int index;
+				for (index =0; index < counter; index ++){
+					if (similarity > indexes[counter])
+						break;
+				}
+				for (int j = counter - 1; j > index - 1; j--){
+					results [j+1] = results [j];
+					indexes [j+1] = indexes[j];
+				}
+				results[index] = str;
+				indexes[index] = similarity;
+			}
+			counter++;
+		}
+		return results;
 	}
 }

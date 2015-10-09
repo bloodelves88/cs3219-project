@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 
 public class Parser {
 
@@ -28,37 +29,48 @@ public class Parser {
 		   
 		System.out.println("Parsing text from PDF file " + fileName + "....");
 		File f = new File(fileName);
+		
 		try {
-			PDDocument pdDocument= PDDocument.loadNonSeq(f,null);  
-		if (!f.isFile()) {
-			System.out.println("File " + fileName + " does not exist.");
-            return null;
-		}
-		  
-		try {
-			parser = new NonSequentialPDFParser(new FileInputStream(f));
-		} catch (Exception e) {
-			System.out.println("Unable to open PDF Parser.");
-			return null;
-		}
-		   
-		try {
-			//parser.parse();
-			cosDoc = pdDocument.getDocument();
-			pdfStripper = new PDFTextStripper();
-			pdDoc = new PDDocument(cosDoc);
-			parsedText = pdfStripper.getText(pdDoc);
-		} catch (Exception e) {
-			System.out.println("An exception occured in parsing the PDF Document.");
-			e.printStackTrace();
-			try {
-				if (cosDoc != null) cosDoc.close();
-				if (pdDoc != null) pdDoc.close();
-			} catch (Exception e1) {
-				e.printStackTrace();
+			String fileType=Files.probeContentType(f.toPath());
+
+			if(fileType=="application/pdf")
+			{
+		 			PDDocument pdDocument= PDDocument.loadNonSeq(f,null);  
+				if (!f.isFile()) {
+					System.out.println("File " + fileName + " does not exist.");
+		            return null;
+				}
+				  
+				try {
+					parser = new NonSequentialPDFParser(new FileInputStream(f));
+				} catch (Exception e) {
+					System.out.println("Unable to open PDF Parser.");
+					return null;
+				}
+				   
+				try {
+					//parser.parse();
+					cosDoc = pdDocument.getDocument();
+					pdfStripper = new PDFTextStripper();
+					pdDoc = new PDDocument(cosDoc);
+					parsedText = pdfStripper.getText(pdDoc);
+					pdDocument.close();
+				} catch (Exception e) {
+					System.out.println("An exception occured in parsing the PDF Document.");
+					e.printStackTrace();
+					try {
+						if (cosDoc != null) cosDoc.close();
+						if (pdDoc != null) pdDoc.close();
+					} catch (Exception e1) {
+						e.printStackTrace();
+					}
+					return null;
+				}
 			}
-			return null;
-		}
+			else
+			{
+				System.out.println("File is not of pdf type");
+			}
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
