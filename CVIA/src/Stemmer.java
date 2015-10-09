@@ -22,10 +22,10 @@ public class Stemmer {
         wordList = readFileToList(fileName);
         stemmedSet = stemWordList(wordList);
         
-        return (String[]) stemmedSet.toArray();
+        return stemmedSet.toArray(new String[stemmedSet.size()]);
     }
     
-    public static List<String> readFileToList(String fileName) {
+    public private static List<String> readFileToList(String fileName) {
         List<String> wordList = new ArrayList<String>();
         List<String> stopWordList = new ArrayList<String> (Arrays.asList("a", "about", "above", 
         		"after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", 
@@ -62,7 +62,6 @@ public class Stemmer {
                     		wordList.add(temp);
                     	}
                     }
-//                    wordList.addAll(Arrays.asList(words.split("\\s")));
                 } 
                 words = in.readLine();
             }
@@ -74,7 +73,7 @@ public class Stemmer {
         return wordList;
     }
     
-    public static Set<String> stemWordList(List<String> wordList) {
+    public private static Set<String> stemWordList(List<String> wordList) {
         List<String> stemmedLineList = new ArrayList<String>();
         englishStemmer stemmer = new englishStemmer();
         
@@ -86,7 +85,7 @@ public class Stemmer {
         return stemmedSet;
     }
     
-    public static String stem(englishStemmer stemmer, String word) {
+    public private static String stem(englishStemmer stemmer, String word) {
         stemmer.setCurrent(word);
         if (stemmer.stem()) {
             return stemmer.getCurrent();
