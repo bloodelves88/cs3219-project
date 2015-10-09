@@ -104,15 +104,15 @@ public class TextRetrieval {
 
 	private double CosineSimilarity(String[] fileTerms,String[]terms)
 	{
-		int commonTerms=0;
+		double commonTerms=0.0;
 		for(int i=0;i<terms.length;i++)
 		{
-			if(Arrays.asList(fileTerms).contains(terms[i]))
+			if(Arrays.asList(fileTerms).contains(terms[i].toLowerCase()))
 			{
 				commonTerms++;
 			}
 		}
-		return (commonTerms)/(Math.sqrt(fileTerms.length^2+terms.length^2));
+		return (commonTerms)/(Math.sqrt(Math.pow(fileTerms.length,2)+Math.pow(terms.length,2)));
 	}
 	
 	public String[] getDocumentsByTerm(String term)
