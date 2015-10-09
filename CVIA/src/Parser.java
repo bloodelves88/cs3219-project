@@ -33,9 +33,7 @@ public class Parser {
 		try {
 			String fileType=Files.probeContentType(f.toPath());
 
-			if(fileType=="application/pdf")
-			{
-		 			PDDocument pdDocument= PDDocument.loadNonSeq(f,null);  
+		 		PDDocument pdDocument= PDDocument.loadNonSeq(f,null);  
 				if (!f.isFile()) {
 					System.out.println("File " + fileName + " does not exist.");
 		            return null;
@@ -66,11 +64,7 @@ public class Parser {
 					}
 					return null;
 				}
-			}
-			else
-			{
-				System.out.println("File is not of pdf type");
-			}
+			
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
