@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 import java.awt.GridBagConstraints;
 
@@ -19,11 +20,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -36,6 +36,7 @@ public class GUI {
 
 	private JFrame frmCvia;
 	private String[] jobs = { "Java Developer", "Android Developer", "iOS Developer", "Web Developer" };
+	private String[] tableHeaders = { "Filename", "Score", "Save file?"};
 	private String keywords = "";
 	private String selectedJob = "";
 	/**
@@ -90,10 +91,28 @@ public class GUI {
 		gbc_lblFilesOpened.gridy = 1;
 		frmCvia.getContentPane().add(lblFilesOpened, gbc_lblFilesOpened);
 		
-		final JTextArea textAreaFilesOpen = new JTextArea();
-		textAreaFilesOpen.setEditable(false);
-		textAreaFilesOpen.setLineWrap(true);
-		textAreaFilesOpen.setRows(2);
+		final JTable textAreaFilesOpen = new JTable() {
+			// Sets the type of the column in the table
+			// Needed to make checkboxes in the table 
+			@Override
+            public Class getColumnClass(int column) {
+                switch (column) {
+                    case 0:
+                        return String.class;
+                    case 1:
+                        return Integer.class;
+                    default:
+                        return Boolean.class;
+                }
+            }
+		};
+		DefaultTableModel tableModel = new DefaultTableModel();
+
+		tableModel.setColumnIdentifiers(new Object[] {"Files", "Score", "Keep?"});
+		textAreaFilesOpen.setModel(tableModel);
+		
+		textAreaFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
+		textAreaFilesOpen.setCellSelectionEnabled(true);
 		textAreaFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(textAreaFilesOpen);
 		GridBagConstraints gbc_textAreaFilesOpen = new GridBagConstraints();
@@ -103,7 +122,7 @@ public class GUI {
 		gbc_textAreaFilesOpen.gridx = 1;
 		gbc_textAreaFilesOpen.gridy = 2;
 		frmCvia.getContentPane().add(textAreaFilesOpenScrollPane, gbc_textAreaFilesOpen);
-
+		
 		JLabel lblJob = new JLabel("Job:");
 		lblJob.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblJob = new GridBagConstraints();
@@ -185,9 +204,14 @@ public class GUI {
 						System.out.println(files[i].toString());
 						files[i] = GUIModel.parsePDFFiles(files[i], i);
 						openFileList = openFileList.concat(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt" + "\n");
+						
+						DefaultTableModel model = (DefaultTableModel) textAreaFilesOpen.getModel();
+						model.addRow(new Object[]{System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt", "?", false});
 					}
-					textAreaFilesOpen.setText(openFileList);
-
+					
+					
+					//textAreaFilesOpen.setText(openFileList);
+					/*
 					try {
 						List<String> contents = new ArrayList<String>();
 						for (int i = 0; i < files.length; i++) {
@@ -197,6 +221,7 @@ public class GUI {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					*/
 				}
 			}
 		});
@@ -292,7 +317,7 @@ public class GUI {
 				keywords = readFile(System.getProperty("user.dir")+"\\Java Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("An exception occured in writing the Java Developer keywords. ");
 				e1.printStackTrace();
 			}
 		} else if (itemName.equals("Android Developer")) {
@@ -300,7 +325,7 @@ public class GUI {
 				keywords = readFile(System.getProperty("user.dir")+"\\Android Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("An exception occured in writing the Android Developer keywords. ");
 				e1.printStackTrace();
 			}
 		} else if (itemName.equals("iOS Developer")) {
@@ -308,7 +333,7 @@ public class GUI {
 				keywords = readFile(System.getProperty("user.dir")+"\\iOS Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("An exception occured in writing the iOS Developer keywords. ");
 				e1.printStackTrace();
 			}
 		} else if (itemName.equals("Web Developer")) {
@@ -316,7 +341,7 @@ public class GUI {
 				keywords = readFile(System.getProperty("user.dir")+"\\Web Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("An exception occured in writing the Web Developer keywords. ");
 				e1.printStackTrace();
 			}
 		}

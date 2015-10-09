@@ -24,9 +24,9 @@ public class GUIModel {
      * 					  Each index contains the contents of 1 file.
      * 
      */
-	public static void storeContentsOfOpenFiles(List<String> fileContents) {
-		fileContentsList = fileContents;
-	}
+	//public static void storeContentsOfOpenFiles(List<String> fileContents) {
+	//	fileContentsList = fileContents;
+	//}
 	
 	/**
      * 
