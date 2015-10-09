@@ -1,5 +1,3 @@
-//package snowballstemmer;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ public class Stemmer {
         return stemmedSet.toArray(new String[stemmedSet.size()]);
     }
     
-    public private static List<String> readFileToList(String fileName) {
+    private static List<String> readFileToList(String fileName) {
         List<String> wordList = new ArrayList<String>();
         List<String> stopWordList = new ArrayList<String> (Arrays.asList("a", "about", "above", 
         		"after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", 
@@ -73,7 +71,7 @@ public class Stemmer {
         return wordList;
     }
     
-    public private static Set<String> stemWordList(List<String> wordList) {
+    private static Set<String> stemWordList(List<String> wordList) {
         List<String> stemmedLineList = new ArrayList<String>();
         englishStemmer stemmer = new englishStemmer();
         
@@ -85,7 +83,7 @@ public class Stemmer {
         return stemmedSet;
     }
     
-    public private static String stem(englishStemmer stemmer, String word) {
+    private static String stem(englishStemmer stemmer, String word) {
         stemmer.setCurrent(word);
         if (stemmer.stem()) {
             return stemmer.getCurrent();
