@@ -185,6 +185,7 @@ public class GUI {
 						System.out.println(files[i].toString());
 						files[i] = GUIModel.parsePDFFiles(files[i], i);
 						openFileList = openFileList.concat(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt" + "\n");
+						GUIModel.startProcessing(files[i].toString());
 					}
 					textAreaFilesOpen.setText(openFileList);
 
@@ -240,7 +241,7 @@ public class GUI {
 		buttonAnalyze.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GUIModel.startProcessing(textAreaKeyWords.getText());
+				GUIModel.search(textAreaKeyWords.getText());
 			}
 		});
 	}
@@ -289,7 +290,7 @@ public class GUI {
 	private void openJobKeywords(final JTextArea textAreaKeyWords, String itemName) {
 		if (itemName.equals("Java Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\Java Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -297,7 +298,7 @@ public class GUI {
 			}
 		} else if (itemName.equals("Android Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\Android Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -305,7 +306,7 @@ public class GUI {
 			}
 		} else if (itemName.equals("iOS Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\iOS Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -313,7 +314,7 @@ public class GUI {
 			}
 		} else if (itemName.equals("Web Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\Web Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block

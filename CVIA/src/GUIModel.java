@@ -1,10 +1,14 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class GUIModel {
 	private static List<String> fileContentsList;
 	private static Parser parser= new Parser();
+
+	private static TextRetrieval textRetrieval=new TextRetrieval();
+	private static Stemmer stemmer=new Stemmer();
 	
 	/**
      * 
@@ -53,11 +57,23 @@ public class GUIModel {
 	 * @param keywords 	String of keywords (need to split them)
      * 
      */
-	public static void startProcessing(String keywords) {
+	public static void startProcessing(String fileName) {
 		// Do stemming/lemmatization, weighting, etc.
 		// E.g. 
 		// for(int i = 0; i < fileContentsList.size(); i++) {
 		// 	  result = doStemming(fileContentsList.get(i));
 		// }
+		String[] fileTerms=stemmer.processFile(fileName);
+		textRetrieval.AddFile(fileName, fileTerms);
+	}
+	
+	public static void search(String keywords)
+	{
+		String[] lines=keywords.split("\\r?\\n");
+		
+		String[] results=textRetrieval.getWeightedResults(lines);
+		
+		System.out.println(lines);
+				
 	}
 }
