@@ -271,7 +271,13 @@ public class GUI {
 		buttonAnalyze.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GUIModel.search(textAreaKeyWords.getText());
+				String[][] results = GUIModel.search(textAreaKeyWords.getText());
+				
+				DefaultTableModel dtm = (DefaultTableModel) textAreaFilesOpen.getModel();
+				dtm.setRowCount(0);
+				for (int i = 0; i < results.length; i++) {
+					dtm.addRow(new Object[]{results[i][0], results[i][1], false});
+				}
 			}
 		});
 	}

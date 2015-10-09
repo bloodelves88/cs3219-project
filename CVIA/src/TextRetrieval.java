@@ -128,7 +128,7 @@ public class TextRetrieval {
 	{
 		String[] results=new String[directIndex.size()];
 		double[] indexes=new double[directIndex.size()];
-		String[][] combinedResult=new String[directIndex.size()][1];
+		String[][] combinedResult=new String[directIndex.size()][2];
 		int counter=0;
 		double similarity=0;
 		for(String str:directIndex.keys())
