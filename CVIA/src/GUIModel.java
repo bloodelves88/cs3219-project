@@ -5,7 +5,6 @@ import java.util.List;
 public class GUIModel {
 	private static List<String> fileContentsList;
 	private static Parser parser= new Parser();
-	private static int i = 0;
 	
 	/**
      * 
