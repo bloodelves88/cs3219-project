@@ -254,6 +254,26 @@ public class GUI {
 				saveJobKeywords(selectedJob, keywords);
 			}
 		});
+		
+		JButton btnSaveMarkedFiles = new JButton("Save Marked Files");
+		GridBagConstraints gbc_btnSaveMarkedFiles = new GridBagConstraints();
+		gbc_btnSaveMarkedFiles.insets = new Insets(0, 0, 5, 5);
+		gbc_btnSaveMarkedFiles.gridx = 4;
+		gbc_btnSaveMarkedFiles.gridy = 7;
+		frmCvia.getContentPane().add(btnSaveMarkedFiles, gbc_btnSaveMarkedFiles);
+		btnSaveMarkedFiles.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO
+				String saveFileList = "";
+				for (int i = 0; i < textAreaFilesOpen.getRowCount(); i++) {
+					if ((Boolean) textAreaFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
+						saveFileList = saveFileList.concat((String) textAreaFilesOpen.getModel().getValueAt(i, 0));
+					}
+				}
+				writeTextToFile(saveFileList, System.getProperty("user.dir")+"\\Saved CVs.txt");
+			}
+		});
 
 		JButton buttonAnalyze = new JButton("Start Analyzing");
 		GridBagConstraints gbc_buttonAnalyze = new GridBagConstraints();
@@ -276,6 +296,7 @@ public class GUI {
 				DefaultTableModel dtm = (DefaultTableModel) textAreaFilesOpen.getModel();
 				dtm.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
+					System.out.println(results[i][1]);
 					dtm.addRow(new Object[]{results[i][0], results[i][1], false});
 				}
 			}
