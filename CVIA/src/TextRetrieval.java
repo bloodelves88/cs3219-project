@@ -124,10 +124,11 @@ public class TextRetrieval {
 	{
 		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
 	}
-	public String[] getWeightedResults(String[] terms)
+	public String[][] getWeightedResults(String[] terms)
 	{
 		String[] results=new String[directIndex.size()];
 		double[] indexes=new double[directIndex.size()];
+		String[][] combinedResult=new String[directIndex.size()][1];
 		int counter=0;
 		double similarity=0;
 		for(String str:directIndex.keys())
@@ -152,6 +153,11 @@ public class TextRetrieval {
 			}
 			counter++;
 		}
-		return results;
+		for(int i=0;i<combinedResult.length;i++)
+		{
+			combinedResult[i][0]=results[i];
+			combinedResult[i][1]=String.valueOf(indexes[i]);
+		}
+		return combinedResult;
 	}
 }

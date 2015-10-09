@@ -67,13 +67,12 @@ public class GUIModel {
 		textRetrieval.AddFile(fileName, fileTerms);
 	}
 	
-	public static void search(String keywords)
+	public static String[][] search(String keywords)
 	{
 		String[] lines=keywords.split("\\r?\\n");
 		
-		String[] results=textRetrieval.getWeightedResults(lines);
+		return textRetrieval.getWeightedResults(lines);
 		
-		System.out.println(lines);
 				
 	}
 }
