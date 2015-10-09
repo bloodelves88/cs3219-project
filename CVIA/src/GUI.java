@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
@@ -36,7 +37,6 @@ public class GUI {
 
 	private JFrame frmCvia;
 	private String[] jobs = { "Java Developer", "Android Developer", "iOS Developer", "Web Developer" };
-	private String[] tableHeaders = { "Filename", "Score", "Save file?"};
 	private String keywords = "";
 	private String selectedJob = "";
 	/**
@@ -100,16 +100,21 @@ public class GUI {
                     case 0:
                         return String.class;
                     case 1:
-                        return Integer.class;
+                        return Double.class;
                     default:
                         return Boolean.class;
                 }
             }
 		};
 		DefaultTableModel tableModel = new DefaultTableModel();
+		textAreaFilesOpen.setAutoCreateRowSorter(true);
 
 		tableModel.setColumnIdentifiers(new Object[] {"Files", "Score", "Keep?"});
 		textAreaFilesOpen.setModel(tableModel);
+		
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		textAreaFilesOpen.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
 		
 		textAreaFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
 		textAreaFilesOpen.setCellSelectionEnabled(true);
@@ -204,6 +209,7 @@ public class GUI {
 						System.out.println(files[i].toString());
 						files[i] = GUIModel.parsePDFFiles(files[i], i);
 						openFileList = openFileList.concat(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt" + "\n");
+						GUIModel.startProcessing(files[i].toString());
 						
 						DefaultTableModel model = (DefaultTableModel) textAreaFilesOpen.getModel();
 						model.addRow(new Object[]{System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt", "?", false});
@@ -265,7 +271,7 @@ public class GUI {
 		buttonAnalyze.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GUIModel.startProcessing(textAreaKeyWords.getText());
+				GUIModel.search(textAreaKeyWords.getText());
 			}
 		});
 	}
@@ -301,20 +307,20 @@ public class GUI {
 
 	private void saveJobKeywords(String itemName, String keywords) {
 		if (itemName.equals("Java Developer")) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\Java Developer.txt");
+			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
 		} else if (itemName.equals("Android Developer")) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\Android Developer.txt");
+			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
 		} else if (itemName.equals("iOS Developer")) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\iOS Developer.txt");
+			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
 		} else if (itemName.equals("Web Developer")) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\Web Developer.txt");
+			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
 		}
 	}
 
 	private void openJobKeywords(final JTextArea textAreaKeyWords, String itemName) {
 		if (itemName.equals("Java Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\Java Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				System.out.println("An exception occured in writing the Java Developer keywords. ");
@@ -322,7 +328,7 @@ public class GUI {
 			}
 		} else if (itemName.equals("Android Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\Android Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				System.out.println("An exception occured in writing the Android Developer keywords. ");
@@ -330,7 +336,7 @@ public class GUI {
 			}
 		} else if (itemName.equals("iOS Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\iOS Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				System.out.println("An exception occured in writing the iOS Developer keywords. ");
@@ -338,7 +344,7 @@ public class GUI {
 			}
 		} else if (itemName.equals("Web Developer")) {
 			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\Web Developer.txt");
+				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
 				textAreaKeyWords.setText(keywords);
 			} catch (IOException e1) {
 				System.out.println("An exception occured in writing the Web Developer keywords. ");
