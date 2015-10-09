@@ -91,7 +91,7 @@ public class GUI {
 		gbc_lblFilesOpened.gridy = 1;
 		frmCvia.getContentPane().add(lblFilesOpened, gbc_lblFilesOpened);
 		
-		final JTable textAreaFilesOpen = new JTable() {
+		final JTable tableFilesOpen = new JTable() {
 			// Sets the type of the column in the table
 			// Needed to make checkboxes in the table 
 			@Override
@@ -107,19 +107,19 @@ public class GUI {
             }
 		};
 		DefaultTableModel tableModel = new DefaultTableModel();
-		textAreaFilesOpen.setAutoCreateRowSorter(true);
+		tableFilesOpen.setAutoCreateRowSorter(true);
 
 		tableModel.setColumnIdentifiers(new Object[] {"Files", "Score", "Keep?"});
-		textAreaFilesOpen.setModel(tableModel);
+		tableFilesOpen.setModel(tableModel);
 		
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
-		textAreaFilesOpen.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
+		tableFilesOpen.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
 		
-		textAreaFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
-		textAreaFilesOpen.setCellSelectionEnabled(true);
-		textAreaFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(textAreaFilesOpen);
+		tableFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
+		tableFilesOpen.setCellSelectionEnabled(true);
+		tableFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(tableFilesOpen);
 		GridBagConstraints gbc_textAreaFilesOpen = new GridBagConstraints();
 		gbc_textAreaFilesOpen.gridwidth = 5;
 		gbc_textAreaFilesOpen.insets = new Insets(0, 0, 5, 5);
@@ -204,30 +204,14 @@ public class GUI {
 				int rVal = c.showOpenDialog(null);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
-					String openFileList= ""; // list of open files (shown in the GUI)
 					for (int i = 0; i < files.length; i++) {
+						DefaultTableModel model = (DefaultTableModel) tableFilesOpen.getModel();
+						model.addRow(new Object[]{files[i].getPath(), "?", false});
+						
 						System.out.println(files[i].toString());
 						files[i] = GUIModel.parsePDFFiles(files[i], i);
-						openFileList = openFileList.concat(System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt" + "\n");
 						GUIModel.startProcessing(files[i].toString());
-						
-						DefaultTableModel model = (DefaultTableModel) textAreaFilesOpen.getModel();
-						model.addRow(new Object[]{System.getProperty("user.dir")+"\\pdfoutput" + i + ".txt", "?", false});
 					}
-					
-					
-					//textAreaFilesOpen.setText(openFileList);
-					/*
-					try {
-						List<String> contents = new ArrayList<String>();
-						for (int i = 0; i < files.length; i++) {
-							contents.add(readFile(files[i].toString())); // contents of files here
-						}
-						GUIModel.storeContentsOfOpenFiles(contents);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					*/
 				}
 			}
 		});
@@ -238,7 +222,6 @@ public class GUI {
 		gbc_horizontalStrut.gridx = 2;
 		gbc_horizontalStrut.gridy = 7;
 		frmCvia.getContentPane().add(horizontalStrut, gbc_horizontalStrut);
-
 
 		JButton buttonSaveResults = new JButton("Save Keywords");
 		GridBagConstraints gbc_buttonSaveResults = new GridBagConstraints();
@@ -266,9 +249,9 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				// TODO
 				String saveFileList = "";
-				for (int i = 0; i < textAreaFilesOpen.getRowCount(); i++) {
-					if ((Boolean) textAreaFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
-						saveFileList = saveFileList.concat((String) textAreaFilesOpen.getModel().getValueAt(i, 0));
+				for (int i = 0; i < tableFilesOpen.getRowCount(); i++) {
+					if ((Boolean) tableFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
+						saveFileList = saveFileList.concat((String) tableFilesOpen.getModel().getValueAt(i, 0) + "\n");
 					}
 				}
 				writeTextToFile(saveFileList, System.getProperty("user.dir")+"\\Saved CVs.txt");
@@ -293,7 +276,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				String[][] results = GUIModel.search(textAreaKeyWords.getText());
 				
-				DefaultTableModel dtm = (DefaultTableModel) textAreaFilesOpen.getModel();
+				DefaultTableModel dtm = (DefaultTableModel) tableFilesOpen.getModel();
 				dtm.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
