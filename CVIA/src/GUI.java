@@ -375,7 +375,7 @@ public class GUI {
 
 	private void saveNewJob(String jobName, String keywords) {
 		writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\" + jobName + ".txt");
-		jobListString = jobListString.concat(jobName);
+		jobListString = jobListString.concat(jobName + "\n");
 		writeTextToFile(jobListString, System.getProperty("user.dir")+"\\CViA\\" + FILENAME_JOB_LIST);
 	}
 
