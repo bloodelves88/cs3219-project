@@ -35,9 +35,12 @@ import javax.swing.JTextField;
 
 
 public class GUI {
+	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
+	private static final String FILENAME_JOB_LIST = "Job List.txt";
 
 	private JFrame frmCvia;
 	private String[] jobList;
+	private String jobListString;
 	private String keywords = "";
 	private String selectedJob = "";
 	private JTextField txtEnterNewJob;
@@ -186,7 +189,6 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				//int index = comboBox.getSelectedIndex();
 				selectedJob = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
-				
 				openJobKeywords(textAreaKeyWords, selectedJob);
 			}
 		});
@@ -278,14 +280,15 @@ public class GUI {
 		btnSaveMarkedFiles.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				String saveFileList = "";
 				for (int i = 0; i < tableFilesOpen.getRowCount(); i++) {
 					if ((Boolean) tableFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
 						saveFileList = saveFileList.concat((String) tableFilesOpen.getModel().getValueAt(i, 0) + "\n");
 					}
 				}
-				writeTextToFile(saveFileList, System.getProperty("user.dir")+"\\Saved CVs.txt");
+				if (!saveFileList.isEmpty()) {
+					writeTextToFile(saveFileList, System.getProperty("user.dir")+ "\\"+ FILENAME_SAVED_CVS);
+				}
 			}
 		});
 
@@ -320,14 +323,15 @@ public class GUI {
 	}
 	
 	private void loadJobList() {
-		String jobListString = null;
 		try {
-			jobListString = readFile(System.getProperty("user.dir")+"\\CViA\\Job List.txt");
+			jobListString = readFile(System.getProperty("user.dir")+"\\CViA\\" + FILENAME_JOB_LIST);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		jobList = jobListString.split("\n");
+		for (int i = 0; i < jobList.length; i++) {
+			jobList[i] = jobList[i].trim();
+		}
 	}
 
 	private String readFile(String pathname) throws IOException {
@@ -359,51 +363,35 @@ public class GUI {
 		}
 	}
 
-	private void saveJobKeywords(String itemName, String keywords) {
-		if (itemName.equals(jobList[2])) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
-		} else if (itemName.equals(jobList[0])) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
-		} else if (itemName.equals(jobList[1])) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
-		} else if (itemName.equals(jobList[3])) {
-			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
+	private void saveJobKeywords(String selectedJob, String keywords) {
+		for (int i = 0; i < jobList.length; i++) {
+			if (selectedJob.equals(jobList[i])) {
+				writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\" + jobList[i] + ".txt");
+				return;
+			}
 		}
+		saveNewJob(selectedJob, keywords);
+	}
+
+	private void saveNewJob(String jobName, String keywords) {
+		writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\" + jobName + ".txt");
+		jobListString = jobListString.concat(jobName);
+		writeTextToFile(jobListString, System.getProperty("user.dir")+"\\CViA\\" + FILENAME_JOB_LIST);
 	}
 
 	private void openJobKeywords(final JTextArea textAreaKeyWords, String itemName) {
-		if (itemName.equals(jobList[2])) {
-			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
-				textAreaKeyWords.setText(keywords);
-			} catch (IOException e1) {
-				System.out.println("An exception occured in writing the Java Developer keywords. ");
-				e1.printStackTrace();
-			}
-		} else if (itemName.equals(jobList[0])) {
-			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
-				textAreaKeyWords.setText(keywords);
-			} catch (IOException e1) {
-				System.out.println("An exception occured in writing the Android Developer keywords. ");
-				e1.printStackTrace();
-			}
-		} else if (itemName.equals(jobList[1])) {
-			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
-				textAreaKeyWords.setText(keywords);
-			} catch (IOException e1) {
-				System.out.println("An exception occured in writing the iOS Developer keywords. ");
-				e1.printStackTrace();
-			}
-		} else if (itemName.equals(jobList[3])) {
-			try {
-				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
-				textAreaKeyWords.setText(keywords);
-			} catch (IOException e1) {
-				System.out.println("An exception occured in writing the Web Developer keywords. ");
-				e1.printStackTrace();
+		for (int i = 0; i < jobList.length; i++) {
+			if (itemName.equals(jobList[i])) {
+				try {
+					keywords = readFile(System.getProperty("user.dir")+"\\CViA\\" + jobList[i] + ".txt");
+					textAreaKeyWords.setText(keywords);
+				} catch (IOException e1) {
+					System.out.println("An exception occured in opening the keywords. ");
+					e1.printStackTrace();
+				}
+				return;
 			}
 		}
+		textAreaKeyWords.setText("");
 	}
 }
