@@ -31,14 +31,16 @@ import java.awt.Component;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JTextField;
 
 
 public class GUI {
 
 	private JFrame frmCvia;
-	private String[] jobs = { "Java Developer", "Android Developer", "iOS Developer", "Web Developer" };
+	private String[] jobList;
 	private String keywords = "";
 	private String selectedJob = "";
+	private JTextField txtEnterNewJob;
 	/**
 	 * Launch the application.
 	 */
@@ -66,6 +68,8 @@ public class GUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		loadJobList();
+		
 		frmCvia = new JFrame();
 		frmCvia.setTitle("CViA");
 		frmCvia.setBounds(100, 100, 650, 500);
@@ -136,6 +140,15 @@ public class GUI {
 		gbc_lblJob.gridy = 3;
 		frmCvia.getContentPane().add(lblJob, gbc_lblJob);
 		
+		txtEnterNewJob = new JTextField();
+		GridBagConstraints gbc_txtEnterNewJob = new GridBagConstraints();
+		gbc_txtEnterNewJob.insets = new Insets(0, 0, 5, 5);
+		gbc_txtEnterNewJob.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtEnterNewJob.gridx = 4;
+		gbc_txtEnterNewJob.gridy = 4;
+		frmCvia.getContentPane().add(txtEnterNewJob, gbc_txtEnterNewJob);
+		txtEnterNewJob.setColumns(10);
+		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_1 = new GridBagConstraints();
 		gbc_horizontalStrut_1.insets = new Insets(0, 0, 5, 5);
@@ -157,16 +170,18 @@ public class GUI {
 
 		JComboBox<String> comboBox = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.gridwidth = 5;
+		gbc_comboBox.gridwidth = 3;
 		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 4;
 		frmCvia.getContentPane().add(comboBox, gbc_comboBox);
-		for (int i = 0; i < jobs.length; i++) {
-			comboBox.addItem(jobs[i]);
+		for (int i = 0; i < jobList.length; i++) {
+			comboBox.addItem(jobList[i]);
 		}
-
+		selectedJob = (String) comboBox.getSelectedItem();
+		openJobKeywords(textAreaKeyWords, selectedJob);
+		
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//int index = comboBox.getSelectedIndex();
@@ -175,6 +190,22 @@ public class GUI {
 				openJobKeywords(textAreaKeyWords, selectedJob);
 			}
 		});
+		
+		JButton btnAddJob = new JButton("Add New Job");
+		btnAddJob.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (!txtEnterNewJob.getText().equals("")) {
+					comboBox.addItem(txtEnterNewJob.getText());
+					txtEnterNewJob.setText("");
+				}
+			}
+		});
+		
+		GridBagConstraints gbc_btnAddJob = new GridBagConstraints();
+		gbc_btnAddJob.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAddJob.gridx = 5;
+		gbc_btnAddJob.gridy = 4;
+		frmCvia.getContentPane().add(btnAddJob, gbc_btnAddJob);
 
 		JLabel lblKeyWords = new JLabel("Key words:");
 		GridBagConstraints gbc_lblKeyWords = new GridBagConstraints();
@@ -284,6 +315,19 @@ public class GUI {
 				}
 			}
 		});
+		
+		
+	}
+	
+	private void loadJobList() {
+		String jobListString = null;
+		try {
+			jobListString = readFile(System.getProperty("user.dir")+"\\CViA\\Job List.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		jobList = jobListString.split("\n");
 	}
 
 	private String readFile(String pathname) throws IOException {
@@ -316,19 +360,19 @@ public class GUI {
 	}
 
 	private void saveJobKeywords(String itemName, String keywords) {
-		if (itemName.equals("Java Developer")) {
+		if (itemName.equals(jobList[2])) {
 			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
-		} else if (itemName.equals("Android Developer")) {
+		} else if (itemName.equals(jobList[0])) {
 			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
-		} else if (itemName.equals("iOS Developer")) {
+		} else if (itemName.equals(jobList[1])) {
 			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
-		} else if (itemName.equals("Web Developer")) {
+		} else if (itemName.equals(jobList[3])) {
 			writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
 		}
 	}
 
 	private void openJobKeywords(final JTextArea textAreaKeyWords, String itemName) {
-		if (itemName.equals("Java Developer")) {
+		if (itemName.equals(jobList[2])) {
 			try {
 				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Java Developer.txt");
 				textAreaKeyWords.setText(keywords);
@@ -336,7 +380,7 @@ public class GUI {
 				System.out.println("An exception occured in writing the Java Developer keywords. ");
 				e1.printStackTrace();
 			}
-		} else if (itemName.equals("Android Developer")) {
+		} else if (itemName.equals(jobList[0])) {
 			try {
 				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Android Developer.txt");
 				textAreaKeyWords.setText(keywords);
@@ -344,7 +388,7 @@ public class GUI {
 				System.out.println("An exception occured in writing the Android Developer keywords. ");
 				e1.printStackTrace();
 			}
-		} else if (itemName.equals("iOS Developer")) {
+		} else if (itemName.equals(jobList[1])) {
 			try {
 				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\iOS Developer.txt");
 				textAreaKeyWords.setText(keywords);
@@ -352,7 +396,7 @@ public class GUI {
 				System.out.println("An exception occured in writing the iOS Developer keywords. ");
 				e1.printStackTrace();
 			}
-		} else if (itemName.equals("Web Developer")) {
+		} else if (itemName.equals(jobList[3])) {
 			try {
 				keywords = readFile(System.getProperty("user.dir")+"\\CViA\\Web Developer.txt");
 				textAreaKeyWords.setText(keywords);
