@@ -48,6 +48,8 @@ public class GUIModel {
      * 
      */
 	public static void startProcessing(String fileName) {
+		//Category category=new Category();
+		//ArrayList<String> fileportions=category.SplitFile(fileName);
 		String[] fileTerms=stemmer.processFile(fileName);
 		textRetrieval.AddFile(fileName, fileTerms);
 	}
