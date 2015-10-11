@@ -17,7 +17,8 @@ public class GUIModel {
      * 
      */
 	public static File parsePDFFiles(File file, int fileNumber) {
-		parser.writeTexttoFile(parser.pdftoText(file.toString()),"pdfoutput" + fileNumber +".txt");
+		
+		parser.parseFile(file, fileNumber);
 		
 		return new File(System.getProperty("user.dir")+"\\pdfoutput" + fileNumber + ".txt");
 	}
@@ -48,8 +49,8 @@ public class GUIModel {
      * 
      */
 	public static void startProcessing(String fileName) {
-		//Category category=new Category();
-		//ArrayList<String> fileportions=category.SplitFile(fileName);
+		Category category=new Category();
+		ArrayList<String> fileportions=category.SplitFile(fileName);
 		String[] fileTerms=stemmer.processFile(fileName);
 		textRetrieval.AddFile(fileName, fileTerms);
 	}
