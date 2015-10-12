@@ -12,10 +12,7 @@ public class TextRetrieval {
 
 	private ST<String,Set<String>> directIndex = new ST<String,Set<String>>() ; 
 	private ST<String,Set<String>> invertedIndex = new ST<String,Set<String>>();
-	private Set<String> queryTagSet,queryImageSet;
-	private Map<String,Integer> occuranceMap=new HashMap<String,Integer>();
-	private Map<String,Integer> resultMap=new HashMap<String,Integer>();
-	private int count=0;
+	private ST<String,Set<String>> fileIndex = new ST<String,Set<String>>();
 	
 	//Possible loading of stored terms
 	public void LoadTerms(String path)
@@ -26,6 +23,55 @@ public class TextRetrieval {
     	{
     		e1.printStackTrace();
     	}
+	}
+	
+	public void AddPortions(ArrayList<String> portions,String fileName)
+	{
+		ArrayList<String> parts=new ArrayList<String>();
+		String categoryName="",categoryDescription="",tempDescription="";
+		int i=0;
+		while(i<portions.size())
+		{
+			categoryName=portions.get(i).trim();
+			i++;
+			categoryDescription=portions.get(i).trim();
+			i++;
+			StringTokenizer st=new StringTokenizer(categoryDescription);
+			while(st.countTokens()<5&&(i+1)<portions.size())
+			{
+				tempDescription=portions.get(i).trim();
+				st=new StringTokenizer(tempDescription);
+				categoryDescription+=tempDescription;
+				i++;
+			}
+			parts.add(categoryName);
+			parts.add(categoryDescription);
+		}
+		Set<String> set=new HashSet<String>(removeDuplicate(parts));
+		fileIndex.put(fileName, set);
+	}
+	private ArrayList<String> removeDuplicate(ArrayList<String> parts)
+	{
+		ArrayList<String>results=new ArrayList<String>();
+		int pointer=0;
+		String currNumber,combined;
+		while(pointer<parts.size())
+		{   
+		  currNumber=parts.get(pointer);
+		  combined=parts.get(pointer+1);
+		  for(int i=0;i<parts.size();i+=2){          
+		    if(currNumber.equals(parts.get(i)) && i>pointer){
+		    	combined+=" "+ parts.get(i)+ " " +parts.get(i+1);
+		    	parts.remove(i);
+		    	parts.remove(i+1);
+		        break;
+		    }
+		  }   
+		  pointer+=2;
+		  results.add(currNumber);
+		  results.add(combined);
+		}
+		return results;
 	}
 	
 	//Adds the file to the directIndex
@@ -155,7 +201,10 @@ public class TextRetrieval {
 		}
 		for(int i=0;i<combinedResult.length;i++)
 		{
-			combinedResult[i][0]=results[i];
+			String temp=results[i];
+			temp=temp.substring(temp.lastIndexOf("\\")+1, temp.length());
+			temp=temp.replaceAll("[^0-9]", "");
+			combinedResult[i][0]=String.valueOf(temp);
 			combinedResult[i][1]=String.valueOf(indexes[i]);
 		}
 		return combinedResult;

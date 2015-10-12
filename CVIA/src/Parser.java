@@ -69,7 +69,7 @@ public class Parser {
 					}
 					return null;
 				}
-			
+			pdDocument.close();
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -96,8 +96,7 @@ public class Parser {
 		public void parseFile(File fileName,int fileNumber)
 		{
 			String fileType=fileName.toString().substring(fileName.toString().lastIndexOf(".")+1,fileName.toString().length());
-			System.out.println(fileType);
-			if(fileType.equals("docx"))
+			if(fileType.equals("docx")||(fileType.equals("doc")))
 			{
 				writeTexttoFile(wordtoText(fileName),"pdfoutput" + fileNumber +".txt");
 			}else if(fileType.equals("pdf"))
