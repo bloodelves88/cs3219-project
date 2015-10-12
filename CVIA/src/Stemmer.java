@@ -16,17 +16,6 @@ public class Stemmer {
 	public Stemmer() {
 	}
     
-	public static void main (String[] args) throws IOException {
-		String[] arr = null;
-		
-		Stemmer stemmer = new Stemmer();
-		arr = stemmer.processFile("input1.txt");
-		
-		for (String temp : arr) {
-			System.out.print(temp + ", ");	
-		}
-		
-	}
     public String[] processFile(String fileName) {
         List<String> wordList;
         Set<String> stemmedSet;
