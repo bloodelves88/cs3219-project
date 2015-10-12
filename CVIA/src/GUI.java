@@ -151,7 +151,7 @@ public class GUI {
 		gbc_btnSeeDetailsOf.gridy = 3;
 		frmCvia.getContentPane().add(btnSeeDetailsOf, gbc_btnSeeDetailsOf);
 				
-		JTextArea textAreaCVDetails = new JTextArea();
+		final JTextArea textAreaCVDetails = new JTextArea();
 		textAreaCVDetails.setEditable(false);
 		GridBagConstraints gbc_textAreaCVDetails = new GridBagConstraints();
 		gbc_textAreaCVDetails.gridwidth = 6;

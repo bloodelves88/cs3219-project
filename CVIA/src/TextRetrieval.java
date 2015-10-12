@@ -34,12 +34,26 @@ public class TextRetrieval {
 		{
 			categoryName=portions.get(i).trim();
 			i++;
-			categoryDescription=portions.get(i).trim();
+			if(portions.get(i)!=null)
+			{
+				categoryDescription=portions.get(i).trim();
+			}
+			else
+			{
+				categoryDescription="";
+			}
 			i++;
 			StringTokenizer st=new StringTokenizer(categoryDescription);
 			while(st.countTokens()<5&&(i+1)<portions.size())
 			{
-				tempDescription=portions.get(i).trim();
+				if(portions.get(i)!=null)
+				{
+					tempDescription=portions.get(i).trim();
+				}
+				else
+				{
+					tempDescription="";
+				}
 				st=new StringTokenizer(tempDescription);
 				categoryDescription+=tempDescription;
 				i++;
@@ -208,5 +222,10 @@ public class TextRetrieval {
 			combinedResult[i][1]=String.valueOf(indexes[i]);
 		}
 		return combinedResult;
+	}
+	
+	public String getCVDetails(String path)
+	{
+		return null;
 	}
 }
