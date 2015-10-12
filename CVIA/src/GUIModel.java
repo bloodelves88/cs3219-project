@@ -61,7 +61,11 @@ public class GUIModel {
 		String[] lines=keywords.split("\\r?\\n");
 		
 		return textRetrieval.getWeightedResults(lines);
-		
-				
+			
+	}
+	
+	public static String getCVDetails(int index)
+	{
+		return null;
 	}
 }
