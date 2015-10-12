@@ -12,7 +12,7 @@ public class TextRetrieval {
 
 	private ST<String,Set<String>> directIndex = new ST<String,Set<String>>() ; 
 	private ST<String,Set<String>> invertedIndex = new ST<String,Set<String>>();
-	private ST<String,Set<String>> fileIndex = new ST<String,Set<String>>();
+	private ST<String,ArrayList<String>> fileIndex = new ST<String,ArrayList<String>>();
 	
 	//Possible loading of stored terms
 	public void LoadTerms(String path)
@@ -61,8 +61,8 @@ public class TextRetrieval {
 			parts.add(categoryName);
 			parts.add(categoryDescription);
 		}
-		Set<String> set=new HashSet<String>(removeDuplicate(parts));
-		fileIndex.put(fileName, set);
+		ArrayList<String>test=removeDuplicate(parts);
+		fileIndex.put(fileName, removeDuplicate(parts));
 	}
 	private ArrayList<String> removeDuplicate(ArrayList<String> parts)
 	{
@@ -226,7 +226,15 @@ public class TextRetrieval {
 	
 	public String getCVDetails(String path)
 	{
-		Set<String> test=fileIndex.get(path);
-		return null;
+		ArrayList<String> list=fileIndex.get(path);
+		String results="";
+		
+			results=list.get(1);
+			results=results.replaceAll(" +", " ");
+			if(results.contains("page1"))
+			{
+				results=results.substring(results.lastIndexOf("page1")+5, results.length());
+			}
+		return results;
 	}
 }
