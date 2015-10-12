@@ -55,7 +55,7 @@ public class TextRetrieval {
 					tempDescription="";
 				}
 				st=new StringTokenizer(tempDescription);
-				categoryDescription+=tempDescription;
+				categoryDescription+=" "+ tempDescription;
 				i++;
 			}
 			parts.add(categoryName);
@@ -233,7 +233,7 @@ public class TextRetrieval {
 			results=results.replaceAll(" +", " ");
 			if(results.contains("page1"))
 			{
-				results=results.substring(results.lastIndexOf("page1")+5, results.length());
+				results="LinkedIn Profile : " + results.substring(results.lastIndexOf("page1")+5, results.length())+ System.getProperty("line.separator") +"Please contact through LinkedIn";
 			}
 		return results;
 	}

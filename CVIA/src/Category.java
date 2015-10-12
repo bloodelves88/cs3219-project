@@ -51,7 +51,7 @@ public class Category {
 						}
 					}
 				}
-					store+=tags;
+					store+=" " + tags;
 			}
 			portions.add(store);
 			txtFile.close();
