@@ -27,21 +27,24 @@ public class Stemmer {
 		}
 		
 	}
-    public String[] processFile(String fileName) throws IOException {
+    public String[] processFile(String fileName) {
         List<String> wordList;
         Set<String> stemmedSet;
         
         
         //Initialize phraseList
         phraseList = new ArrayList<String>();
-        BufferedReader in = new BufferedReader(new FileReader("phrases.txt"));
-        String words = in.readLine();
-        
-        while (words != null) {
-        	phraseList.add(words.toLowerCase().trim());
-        	words = in.readLine();
+        try {
+	        BufferedReader in = new BufferedReader(new FileReader("phrases.txt"));
+	        String words = in.readLine();
+	        
+	        while (words != null) {
+	        	phraseList.add(words.toLowerCase().trim());
+	        	words = in.readLine();
+	        }
+        } catch (Exception e) {
+        	
         }
-        
         System.out.println(phraseList);
         
         
