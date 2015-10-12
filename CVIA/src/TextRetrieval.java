@@ -34,7 +34,7 @@ public class TextRetrieval {
 		{
 			categoryName=portions.get(i).trim();
 			i++;
-			if(portions.get(i)!=null)
+			if(i < portions.size())
 			{
 				categoryDescription=portions.get(i).trim();
 			}
@@ -46,7 +46,7 @@ public class TextRetrieval {
 			StringTokenizer st=new StringTokenizer(categoryDescription);
 			while(st.countTokens()<5&&(i+1)<portions.size())
 			{
-				if(portions.get(i)!=null)
+				if(i < portions.size())
 				{
 					tempDescription=portions.get(i).trim();
 				}
