@@ -32,6 +32,7 @@ import java.awt.Component;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 
 public class GUI {
@@ -75,7 +76,7 @@ public class GUI {
 		
 		frmCvia = new JFrame();
 		frmCvia.setTitle("CViA");
-		frmCvia.setBounds(100, 100, 650, 700);
+		frmCvia.setBounds(100, 25, 650, 700);
 		frmCvia.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {0, 0, 10, 0, 0, 0, 0, 0, 0};
@@ -133,6 +134,7 @@ public class GUI {
 		gbc_textAreaFilesOpen.fill = GridBagConstraints.BOTH;
 		gbc_textAreaFilesOpen.gridx = 1;
 		gbc_textAreaFilesOpen.gridy = 2;
+		tableFilesOpen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		frmCvia.getContentPane().add(textAreaFilesOpenScrollPane, gbc_textAreaFilesOpen);
 		
 		JLabel lblCvDetails = new JLabel("CV Details");
@@ -168,10 +170,8 @@ public class GUI {
 				int colIndex = tableFilesOpen.getSelectedColumn();
 				
 				if (colIndex == 0) {
-					// pass row index 
-					// get CV details 
-					// put CV details into text box
-					textAreaCVDetails.setText("");
+					String CVDetails = GUIModel.getCVDetails(rowIndex);
+					textAreaCVDetails.setText(CVDetails);
 				}
 			}
 		});
