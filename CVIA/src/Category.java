@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 public class Category {
 	List<String> subheadings=new ArrayList<String>(Arrays.asList("summary","qualification","skill","expertise","technical","education"
-			,"work experience","experience","education","extracurricular","curricular","interests","employment","reference","publication","project"));
+			,"work experience","experience","education","extracurricular","curricular","interests","employment","reference","publication","projects"));
 	public ArrayList<String> SplitFile(String path)
 	{
 		ArrayList<String> portions=new ArrayList<String>();
@@ -27,7 +27,6 @@ public class Category {
 				{
 					if(tags.contains(subheadings.get(i))&&(st.countTokens()<5))
 					{
-						System.out.println(st.countTokens());
 						if(portions.isEmpty())
 						{
 							portions.add("Personal Details");
@@ -42,7 +41,6 @@ public class Category {
 						index=(tags.lastIndexOf(subheadings.get(i)))+subheadings.get(i).length();
 						if(index+2<tags.length())
 						{
-							//System.out.println(tags.substring(index+1,index+2));
 							if(Character.isWhitespace(tags.charAt(index))&&Character.isWhitespace(tags.charAt(index+2)))
 							{
 								portions.add(store);

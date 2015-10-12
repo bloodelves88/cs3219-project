@@ -38,7 +38,7 @@ import javax.swing.ListSelectionModel;
 public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
 	private static final String FILENAME_JOB_LIST = "Job List.txt";
-
+	private File[] originalFiles;
 	private JFrame frmCvia;
 	private String[] jobList;
 	private String jobListString;
@@ -213,7 +213,7 @@ public class GUI {
 		frmCvia.getContentPane().add(textAreaKeyWordsScrollPane, gbc_textAreaKeyWords);
 		
 
-		JComboBox<String> comboBox = new JComboBox<String>();
+		final JComboBox<String> comboBox = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.gridwidth = 3;
 		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
@@ -279,6 +279,7 @@ public class GUI {
 				int rVal = c.showOpenDialog(null);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
+					originalFiles = c.getSelectedFiles();
 					for (int i = 0; i < files.length; i++) {
 						DefaultTableModel model = (DefaultTableModel) tableFilesOpen.getModel();
 						model.addRow(new Object[]{files[i].getPath(), "?", false});
@@ -356,7 +357,7 @@ public class GUI {
 				dtm.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
-					dtm.addRow(new Object[]{results[i][0], results[i][1], false});
+					dtm.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
 				}
 			}
 		});

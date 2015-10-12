@@ -53,6 +53,7 @@ public class GUIModel {
 		ArrayList<String> fileportions=category.SplitFile(fileName);
 		String[] fileTerms=stemmer.processFile(fileName);
 		textRetrieval.AddFile(fileName, fileTerms);
+		textRetrieval.AddPortions(fileportions, fileName);
 	}
 	
 	public static String[][] search(String keywords)
@@ -60,7 +61,11 @@ public class GUIModel {
 		String[] lines=keywords.split("\\r?\\n");
 		
 		return textRetrieval.getWeightedResults(lines);
-		
-				
+			
+	}
+	
+	public static String getCVDetails(int index)
+	{
+		return null;
 	}
 }
