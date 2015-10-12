@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -9,6 +11,7 @@ import java.util.Set;
 import org.tartarus.snowball.ext.englishStemmer;
 
 public class Stemmer {
+	private static List<String> phraseList = new ArrayList<String>();
 	
 	public Stemmer() {
 	}
@@ -16,6 +19,23 @@ public class Stemmer {
     public String[] processFile(String fileName) {
         List<String> wordList;
         Set<String> stemmedSet;
+        
+        
+        //Initialize phraseList
+        phraseList = new ArrayList<String>();
+        try {
+	        BufferedReader in = new BufferedReader(new FileReader("phrases.txt"));
+	        String words = in.readLine();
+	        
+	        while (words != null) {
+	        	phraseList.add(words.toLowerCase().trim());
+	        	words = in.readLine();
+	        }
+        } catch (Exception e) {
+        	
+        }
+        System.out.println(phraseList);
+        
         
         wordList = readFileToList(fileName);
         stemmedSet = stemWordList(wordList);
@@ -48,19 +68,45 @@ public class Stemmer {
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
             String words = in.readLine();
+            String firstLine = null, secondLine = "", jointLines = "";
             String[] arr = null;
             
             while (words != null) {
                 if (!(words.trim().equals(""))) {
                     words = words.toLowerCase();
-                    words = words.replaceAll("(\\w)\\.$", "$1");
+                    words = words.replaceAll("(\\w)\\.(\\W*)", "$1$2");
+                    secondLine = words;
+                    
+                    //Check whether phrase exists in 2 consecutive lines
+                    if (firstLine != null) {
+                        if (firstLine.equals("")) {
+	                    
+	                    } else {
+	                    	jointLines = firstLine + " " + secondLine;
+	                    }
+	                    
+	                    for (String phrase : phraseList) {
+	                    	if (jointLines.contains(phrase)) {
+	                    		if (!wordList.contains(phrase)) {
+	                    			wordList.add(phrase);
+	                    		}
+	                    	}
+	                    }
+                    }
+                    
+                    //Add words in the current line
                     arr = words.split("\\s");
                     for (String temp : arr) {
                     	if (!stopWordList.contains(temp)) {
                     		wordList.add(temp);
                     	}
                     }
-                } 
+                    System.out.println(wordList);
+                	firstLine = secondLine;
+                } else {
+                	firstLine = "";
+                }
+                
                 words = in.readLine();
             }
             in.close();
@@ -75,11 +121,23 @@ public class Stemmer {
         List<String> stemmedLineList = new ArrayList<String>();
         englishStemmer stemmer = new englishStemmer();
         
-        for (String word : wordList) {
-                stemmedLineList.add(stem(stemmer, word));
+        for (String line : wordList) {
+        	if (line.contains(" ")) {
+        		String[] wordArr = line.split(" ");
+        		String stemResult = "";
+        		for (String word : wordArr) {
+        			stemResult += stem(stemmer, word) + " ";
+        		}
+        		stemResult = stemResult.trim();
+        		
+        		stemmedLineList.add(stemResult);
+        	} else {
+                stemmedLineList.add(stem(stemmer, line));
+        	}
         }
         
         Set<String> stemmedSet = new HashSet<String>(stemmedLineList);
+
         return stemmedSet;
     }
     
