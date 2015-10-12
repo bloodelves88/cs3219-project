@@ -162,7 +162,8 @@ public class GUI {
 		gbc_textAreaCVDetails.gridx = 1;
 		gbc_textAreaCVDetails.gridy = 4;
 		textAreaCVDetails.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		frmCvia.getContentPane().add(textAreaCVDetails, gbc_textAreaCVDetails);
+		JScrollPane textAreaCVDetailsScrollPane = new JScrollPane(textAreaCVDetails);
+		frmCvia.getContentPane().add(textAreaCVDetailsScrollPane, gbc_textAreaCVDetails);
 		
 		btnSeeDetailsOf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
