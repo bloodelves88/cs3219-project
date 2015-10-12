@@ -66,7 +66,6 @@ public class GUIModel {
 	
 	public static String getCVDetails(int index)
 	{
-		//return getCVDetails(System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
-		return null;
+		return textRetrieval.getCVDetails(System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
 	}
 }

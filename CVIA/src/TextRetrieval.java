@@ -226,6 +226,7 @@ public class TextRetrieval {
 	
 	public String getCVDetails(String path)
 	{
+		Set<String> test=fileIndex.get(path);
 		return null;
 	}
 }
