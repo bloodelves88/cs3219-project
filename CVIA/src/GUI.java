@@ -81,9 +81,9 @@ public class GUI {
 		frmCvia.setBounds(100, 25, 650, 700);
 		frmCvia.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {0, 0, 10, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[] {0, 0, 10, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, Double.MIN_VALUE};
 		frmCvia.getContentPane().setLayout(gridBagLayout);
 		
@@ -131,7 +131,7 @@ public class GUI {
 		tableFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(tableFilesOpen);
 		GridBagConstraints gbc_textAreaFilesOpen = new GridBagConstraints();
-		gbc_textAreaFilesOpen.gridwidth = 6;
+		gbc_textAreaFilesOpen.gridwidth = 5;
 		gbc_textAreaFilesOpen.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaFilesOpen.fill = GridBagConstraints.BOTH;
 		gbc_textAreaFilesOpen.gridx = 1;
@@ -149,7 +149,6 @@ public class GUI {
 		JButton btnSeeDetailsOf = new JButton("See details of selected file");
 		GridBagConstraints gbc_btnSeeDetailsOf = new GridBagConstraints();
 		gbc_btnSeeDetailsOf.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnSeeDetailsOf.gridwidth = 2;
 		gbc_btnSeeDetailsOf.insets = new Insets(0, 0, 5, 5);
 		gbc_btnSeeDetailsOf.gridx = 5;
 		gbc_btnSeeDetailsOf.gridy = 3;
@@ -158,7 +157,7 @@ public class GUI {
 		final JTextArea textAreaCVDetails = new JTextArea();
 		textAreaCVDetails.setEditable(false);
 		GridBagConstraints gbc_textAreaCVDetails = new GridBagConstraints();
-		gbc_textAreaCVDetails.gridwidth = 6;
+		gbc_textAreaCVDetails.gridwidth = 5;
 		gbc_textAreaCVDetails.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaCVDetails.fill = GridBagConstraints.BOTH;
 		gbc_textAreaCVDetails.gridx = 1;
@@ -189,7 +188,6 @@ public class GUI {
 		
 		txtEnterNewJob = new JTextField();
 		GridBagConstraints gbc_txtEnterNewJob = new GridBagConstraints();
-		gbc_txtEnterNewJob.gridwidth = 2;
 		gbc_txtEnterNewJob.insets = new Insets(0, 0, 5, 5);
 		gbc_txtEnterNewJob.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtEnterNewJob.gridx = 4;
@@ -206,7 +204,7 @@ public class GUI {
 
 		final JTextArea textAreaKeyWords = new JTextArea();
 		GridBagConstraints gbc_textAreaKeyWords = new GridBagConstraints();
-		gbc_textAreaKeyWords.gridwidth = 6;
+		gbc_textAreaKeyWords.gridwidth = 5;
 		gbc_textAreaKeyWords.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaKeyWords.fill = GridBagConstraints.BOTH;
 		gbc_textAreaKeyWords.gridx = 1;
@@ -249,8 +247,9 @@ public class GUI {
 		});
 		
 		GridBagConstraints gbc_btnAddJob = new GridBagConstraints();
+		gbc_btnAddJob.anchor = GridBagConstraints.EAST;
 		gbc_btnAddJob.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAddJob.gridx = 6;
+		gbc_btnAddJob.gridx = 5;
 		gbc_btnAddJob.gridy = 6;
 		frmCvia.getContentPane().add(btnAddJob, gbc_btnAddJob);
 
@@ -264,7 +263,7 @@ public class GUI {
 		Component horizontalStrut_2 = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
 		gbc_horizontalStrut_2.insets = new Insets(0, 0, 5, 0);
-		gbc_horizontalStrut_2.gridx = 7;
+		gbc_horizontalStrut_2.gridx = 6;
 		gbc_horizontalStrut_2.gridy = 8;
 		frmCvia.getContentPane().add(horizontalStrut_2, gbc_horizontalStrut_2);
 
@@ -342,8 +341,9 @@ public class GUI {
 
 		JButton buttonAnalyze = new JButton("Start Analyzing");
 		GridBagConstraints gbc_buttonAnalyze = new GridBagConstraints();
+		gbc_buttonAnalyze.anchor = GridBagConstraints.EAST;
 		gbc_buttonAnalyze.insets = new Insets(0, 0, 5, 5);
-		gbc_buttonAnalyze.gridx = 6;
+		gbc_buttonAnalyze.gridx = 5;
 		gbc_buttonAnalyze.gridy = 9;
 		frmCvia.getContentPane().add(buttonAnalyze, gbc_buttonAnalyze);
 		
