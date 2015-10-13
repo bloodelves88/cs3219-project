@@ -39,6 +39,7 @@ public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
 	private static final String FILENAME_JOB_LIST = "Job List.txt";
 	private File[] originalFiles;
+	private int[] resultIndex;
 	private JFrame frmCvia;
 	private String[] jobList;
 	private String jobListString;
@@ -171,7 +172,7 @@ public class GUI {
 				int colIndex = tableFilesOpen.getSelectedColumn();
 				
 				if (colIndex == 0) {
-					String CVDetails = GUIModel.getCVDetails(rowIndex);
+					String CVDetails = GUIModel.getCVDetails(resultIndex[rowIndex]);
 					textAreaCVDetails.setText(CVDetails);
 				}
 			}
@@ -281,6 +282,7 @@ public class GUI {
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
 					originalFiles = c.getSelectedFiles();
+					resultIndex=new int[files.length];
 					for (int i = 0; i < files.length; i++) {
 						DefaultTableModel model = (DefaultTableModel) tableFilesOpen.getModel();
 						model.addRow(new Object[]{files[i].getPath(), "?", false});
@@ -288,6 +290,7 @@ public class GUI {
 						System.out.println(files[i].toString());
 						files[i] = GUIModel.parsePDFFiles(files[i], i);
 						GUIModel.startProcessing(files[i].toString());
+						resultIndex[i]=i;
 					}
 				}
 			}
@@ -359,6 +362,7 @@ public class GUI {
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
 					dtm.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
+					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
 			}
 		});
