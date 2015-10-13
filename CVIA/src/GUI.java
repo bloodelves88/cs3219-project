@@ -38,6 +38,7 @@ import javax.swing.ListSelectionModel;
 public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
 	private static final String FILENAME_JOB_LIST = "Job List.txt";
+	
 	private File[] originalFiles;
 	private int[] resultIndex;
 	private JFrame frmCvia;
@@ -82,7 +83,7 @@ public class GUI {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {0, 0, 10, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, Double.MIN_VALUE};
 		frmCvia.getContentPane().setLayout(gridBagLayout);
 		
@@ -366,8 +367,6 @@ public class GUI {
 				}
 			}
 		});
-		
-		
 	}
 	
 	private void loadJobList() {
