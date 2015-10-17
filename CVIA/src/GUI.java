@@ -21,9 +21,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -111,21 +114,21 @@ public class GUI {
 		gbc_horizontalStrut_left.gridx = 0;
 		gbc_horizontalStrut_left.gridy = 8;
 		frmCvia.getContentPane().add(horizontalStrut_left, gbc_horizontalStrut_left);
-		
+
 		Component horizontalStrut_right = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_right = new GridBagConstraints();
 		gbc_horizontalStrut_right.insets = new Insets(0, 0, 5, 0);
 		gbc_horizontalStrut_right.gridx = 5;
 		gbc_horizontalStrut_right.gridy = 8;
 		frmCvia.getContentPane().add(horizontalStrut_right, gbc_horizontalStrut_right);
-		
+
 		Component verticalStrut_bottom = Box.createVerticalStrut(3);
 		GridBagConstraints gbc_verticalStrut_bottom = new GridBagConstraints();
 		gbc_verticalStrut_bottom.insets = new Insets(0, 0, 0, 5);
 		gbc_verticalStrut_bottom.gridx = 3;
 		gbc_verticalStrut_bottom.gridy = 10;
 		frmCvia.getContentPane().add(verticalStrut_bottom, gbc_verticalStrut_bottom);
-		
+
 		// Labels
 		JLabel lblFilesOpened = new JLabel("Files Open:");
 		GridBagConstraints gbc_lblFilesOpened = new GridBagConstraints();
@@ -140,7 +143,7 @@ public class GUI {
 		gbc_lblCvDetails.gridx = 1;
 		gbc_lblCvDetails.gridy = 3;
 		frmCvia.getContentPane().add(lblCvDetails, gbc_lblCvDetails);
-		
+
 		JLabel lblJob = new JLabel("Job:");
 		lblJob.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblJob = new GridBagConstraints();
@@ -148,14 +151,14 @@ public class GUI {
 		gbc_lblJob.gridx = 1;
 		gbc_lblJob.gridy = 5;
 		frmCvia.getContentPane().add(lblJob, gbc_lblJob);
-		
+
 		JLabel lblKeyWords = new JLabel("Key words:");
 		GridBagConstraints gbc_lblKeyWords = new GridBagConstraints();
 		gbc_lblKeyWords.insets = new Insets(0, 0, 5, 5);
 		gbc_lblKeyWords.gridx = 1;
 		gbc_lblKeyWords.gridy = 7;
 		frmCvia.getContentPane().add(lblKeyWords, gbc_lblKeyWords);
-		
+
 		// Text Area & Text Fields
 		final JTextArea textAreaCVDetails = new JTextArea();
 		textAreaCVDetails.setEditable(false);
@@ -188,7 +191,7 @@ public class GUI {
 		textAreaKeyWords.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaKeyWordsScrollPane = new JScrollPane(textAreaKeyWords);
 		frmCvia.getContentPane().add(textAreaKeyWordsScrollPane, gbc_textAreaKeyWords);
-		
+
 		// Table
 		final JTable tableFilesOpen = new JTable() {
 			// Sets the type of the column in the table
@@ -215,7 +218,7 @@ public class GUI {
 		centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
 		tableFilesOpen.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
 		tableFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
-		
+
 		tableFilesOpen.setCellSelectionEnabled(true);
 		tableFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(tableFilesOpen);
@@ -227,7 +230,7 @@ public class GUI {
 		gbc_textAreaFilesOpen.gridy = 2;
 		tableFilesOpen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		frmCvia.getContentPane().add(textAreaFilesOpenScrollPane, gbc_textAreaFilesOpen);
-		
+
 		// Job Dropdown List
 		final JComboBox<String> comboBox = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
@@ -262,6 +265,10 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser c = new JFileChooser();
+				c.setAcceptAllFileFilterUsed(false);
+				String[] extensions = {"doc", "docx", "pdf", "txt"};
+				String[] descriptions = {".doc, .docx, .pdf, .txt"};
+				c.addChoosableFileFilter(new OpenFileFilter(extensions, descriptions));
 				c.setMultiSelectionEnabled(true); // returns a array of File objects
 				int rVal = c.showOpenDialog(null);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
@@ -300,7 +307,7 @@ public class GUI {
 				}
 			}
 		});
-		
+
 		JButton btnSeeDetailsOf = new JButton("See details of selected file");
 		GridBagConstraints gbc_btnSeeDetailsOf = new GridBagConstraints();
 		gbc_btnSeeDetailsOf.fill = GridBagConstraints.HORIZONTAL;
@@ -456,5 +463,40 @@ public class GUI {
 			}
 		}
 		textAreaKeyWords.setText("");
+	}
+}
+
+class OpenFileFilter extends FileFilter {
+
+	List<String> acceptedExtensions = new ArrayList<String>();
+	List<String> typeDescriptions = new ArrayList<String>();
+
+	public OpenFileFilter(String[] extensions, String[] descriptions) {
+		for (int i = 0; i < extensions.length; i++) {
+			acceptedExtensions.add(extensions[i]);
+		}
+		for (int i = 0; i < descriptions.length; i++) {
+			typeDescriptions.add(descriptions[i]);
+		}
+	}
+
+	@Override
+	public boolean accept(File f) {
+		if (f.isDirectory()) {
+			return true;
+		} else {
+			for (int i = 0; i < acceptedExtensions.size(); i++) {
+				String extension = acceptedExtensions.get(i);
+				if (f.getName().toLowerCase().endsWith(extension)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public String getDescription() {
+		return typeDescriptions.get(0);
 	}
 }
