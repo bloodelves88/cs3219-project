@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -34,7 +35,6 @@ import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-
 public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
 	private static final String FILENAME_JOB_LIST = "Job List.txt";
@@ -47,6 +47,7 @@ public class GUI {
 	private String keywords = "";
 	private String selectedJob = "";
 	private JTextField txtEnterNewJob;
+	private JTextArea textAreaKeyWords;
 	/**
 	 * Launch the application.
 	 */
@@ -81,16 +82,16 @@ public class GUI {
 		frmCvia.setBounds(100, 25, 650, 700);
 		frmCvia.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {0, 0, 10, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[] {0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, Double.MIN_VALUE};
 		frmCvia.getContentPane().setLayout(gridBagLayout);
 		
 		Component verticalStrut = Box.createVerticalStrut(1);
 		GridBagConstraints gbc_verticalStrut = new GridBagConstraints();
 		gbc_verticalStrut.insets = new Insets(0, 0, 5, 5);
-		gbc_verticalStrut.gridx = 4;
+		gbc_verticalStrut.gridx = 3;
 		gbc_verticalStrut.gridy = 0;
 		frmCvia.getContentPane().add(verticalStrut, gbc_verticalStrut);
 
@@ -127,11 +128,63 @@ public class GUI {
 		tableFilesOpen.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
 		
 		tableFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
+		
+				JButton buttonBrowse = new JButton("Open PDF Files");
+				GridBagConstraints gbc_buttonBrowse = new GridBagConstraints();
+				gbc_buttonBrowse.fill = GridBagConstraints.HORIZONTAL;
+				gbc_buttonBrowse.insets = new Insets(0, 0, 5, 5);
+				gbc_buttonBrowse.gridx = 3;
+				gbc_buttonBrowse.gridy = 1;
+				frmCvia.getContentPane().add(buttonBrowse, gbc_buttonBrowse);
+				buttonBrowse.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						JFileChooser c = new JFileChooser();
+						c.setMultiSelectionEnabled(true); // returns a array of File objects
+						int rVal = c.showOpenDialog(null);
+						if (rVal == JFileChooser.APPROVE_OPTION) {
+							File[] files = c.getSelectedFiles();
+							originalFiles = c.getSelectedFiles();
+							resultIndex=new int[files.length];
+							for (int i = 0; i < files.length; i++) {
+								DefaultTableModel model = (DefaultTableModel) tableFilesOpen.getModel();
+								model.addRow(new Object[]{files[i].getPath(), "?", false});
+								
+								System.out.println(files[i].toString());
+								files[i] = GUIModel.parsePDFFiles(files[i], i);
+								GUIModel.startProcessing(files[i].toString());
+								resultIndex[i]=i;
+							}
+						}
+					}
+				});
+		
+				JButton buttonAnalyze = new JButton("Start Analyzing");
+				GridBagConstraints gbc_buttonAnalyze = new GridBagConstraints();
+				gbc_buttonAnalyze.fill = GridBagConstraints.HORIZONTAL;
+				gbc_buttonAnalyze.insets = new Insets(0, 0, 5, 5);
+				gbc_buttonAnalyze.gridx = 4;
+				gbc_buttonAnalyze.gridy = 1;
+				frmCvia.getContentPane().add(buttonAnalyze, gbc_buttonAnalyze);
+				buttonAnalyze.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						String[][] results = GUIModel.search(textAreaKeyWords.getText());
+						
+						DefaultTableModel dtm = (DefaultTableModel) tableFilesOpen.getModel();
+						dtm.setRowCount(0);
+						for (int i = 0; i < results.length; i++) {
+							System.out.println(results[i][1]);
+							dtm.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
+							resultIndex[i]=Integer.parseInt(results[i][0]);
+						}
+					}
+				});
 		tableFilesOpen.setCellSelectionEnabled(true);
 		tableFilesOpen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaFilesOpenScrollPane = new JScrollPane(tableFilesOpen);
 		GridBagConstraints gbc_textAreaFilesOpen = new GridBagConstraints();
-		gbc_textAreaFilesOpen.gridwidth = 5;
+		gbc_textAreaFilesOpen.gridwidth = 4;
 		gbc_textAreaFilesOpen.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaFilesOpen.fill = GridBagConstraints.BOTH;
 		gbc_textAreaFilesOpen.gridx = 1;
@@ -139,7 +192,7 @@ public class GUI {
 		tableFilesOpen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		frmCvia.getContentPane().add(textAreaFilesOpenScrollPane, gbc_textAreaFilesOpen);
 		
-		JLabel lblCvDetails = new JLabel("CV Details");
+		JLabel lblCvDetails = new JLabel("CV Details:");
 		GridBagConstraints gbc_lblCvDetails = new GridBagConstraints();
 		gbc_lblCvDetails.insets = new Insets(0, 0, 5, 5);
 		gbc_lblCvDetails.gridx = 1;
@@ -150,14 +203,38 @@ public class GUI {
 		GridBagConstraints gbc_btnSeeDetailsOf = new GridBagConstraints();
 		gbc_btnSeeDetailsOf.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSeeDetailsOf.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSeeDetailsOf.gridx = 5;
+		gbc_btnSeeDetailsOf.gridx = 3;
 		gbc_btnSeeDetailsOf.gridy = 3;
 		frmCvia.getContentPane().add(btnSeeDetailsOf, gbc_btnSeeDetailsOf);
+		
+		
+		
+		JButton btnSaveMarkedFiles = new JButton("Save Marked Files");
+		GridBagConstraints gbc_btnSaveMarkedFiles = new GridBagConstraints();
+		gbc_btnSaveMarkedFiles.insets = new Insets(0, 0, 5, 5);
+		gbc_btnSaveMarkedFiles.gridx = 4;
+		gbc_btnSaveMarkedFiles.gridy = 3;
+		frmCvia.getContentPane().add(btnSaveMarkedFiles, gbc_btnSaveMarkedFiles);
+		btnSaveMarkedFiles.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String saveFileList = "";
+				for (int i = 0; i < tableFilesOpen.getRowCount(); i++) {
+					if ((Boolean) tableFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
+						saveFileList = saveFileList.concat((String) tableFilesOpen.getModel().getValueAt(i, 0) + "\n");
+					}
+				}
+				if (!saveFileList.isEmpty()) {
+					writeTextToFile(saveFileList, System.getProperty("user.dir")+ "\\"+ FILENAME_SAVED_CVS);
+					JOptionPane.showMessageDialog(null, "The marked files have been saved in " + System.getProperty("user.dir")+ "\\"+ FILENAME_SAVED_CVS);
+				}
+			}
+		});
 				
 		final JTextArea textAreaCVDetails = new JTextArea();
 		textAreaCVDetails.setEditable(false);
 		GridBagConstraints gbc_textAreaCVDetails = new GridBagConstraints();
-		gbc_textAreaCVDetails.gridwidth = 5;
+		gbc_textAreaCVDetails.gridwidth = 4;
 		gbc_textAreaCVDetails.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaCVDetails.fill = GridBagConstraints.BOTH;
 		gbc_textAreaCVDetails.gridx = 1;
@@ -165,18 +242,6 @@ public class GUI {
 		textAreaCVDetails.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaCVDetailsScrollPane = new JScrollPane(textAreaCVDetails);
 		frmCvia.getContentPane().add(textAreaCVDetailsScrollPane, gbc_textAreaCVDetails);
-		
-		btnSeeDetailsOf.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int rowIndex = tableFilesOpen.getSelectedRow();
-				int colIndex = tableFilesOpen.getSelectedColumn();
-				
-				if (colIndex == 0) {
-					String CVDetails = GUIModel.getCVDetails(resultIndex[rowIndex]);
-					textAreaCVDetails.setText(CVDetails);
-				}
-			}
-		});
 		
 		JLabel lblJob = new JLabel("Job:");
 		lblJob.setHorizontalAlignment(SwingConstants.LEFT);
@@ -190,7 +255,7 @@ public class GUI {
 		GridBagConstraints gbc_txtEnterNewJob = new GridBagConstraints();
 		gbc_txtEnterNewJob.insets = new Insets(0, 0, 5, 5);
 		gbc_txtEnterNewJob.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtEnterNewJob.gridx = 4;
+		gbc_txtEnterNewJob.gridx = 3;
 		gbc_txtEnterNewJob.gridy = 6;
 		frmCvia.getContentPane().add(txtEnterNewJob, gbc_txtEnterNewJob);
 		txtEnterNewJob.setColumns(10);
@@ -202,9 +267,9 @@ public class GUI {
 		gbc_horizontalStrut_1.gridy = 8;
 		frmCvia.getContentPane().add(horizontalStrut_1, gbc_horizontalStrut_1);
 
-		final JTextArea textAreaKeyWords = new JTextArea();
+		textAreaKeyWords = new JTextArea();
 		GridBagConstraints gbc_textAreaKeyWords = new GridBagConstraints();
-		gbc_textAreaKeyWords.gridwidth = 5;
+		gbc_textAreaKeyWords.gridwidth = 4;
 		gbc_textAreaKeyWords.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaKeyWords.fill = GridBagConstraints.BOTH;
 		gbc_textAreaKeyWords.gridx = 1;
@@ -216,7 +281,7 @@ public class GUI {
 
 		final JComboBox<String> comboBox = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.gridwidth = 3;
+		gbc_comboBox.gridwidth = 2;
 		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
@@ -247,9 +312,9 @@ public class GUI {
 		});
 		
 		GridBagConstraints gbc_btnAddJob = new GridBagConstraints();
-		gbc_btnAddJob.anchor = GridBagConstraints.EAST;
+		gbc_btnAddJob.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAddJob.insets = new Insets(0, 0, 5, 5);
-		gbc_btnAddJob.gridx = 5;
+		gbc_btnAddJob.gridx = 4;
 		gbc_btnAddJob.gridy = 6;
 		frmCvia.getContentPane().add(btnAddJob, gbc_btnAddJob);
 
@@ -263,110 +328,43 @@ public class GUI {
 		Component horizontalStrut_2 = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
 		gbc_horizontalStrut_2.insets = new Insets(0, 0, 5, 0);
-		gbc_horizontalStrut_2.gridx = 6;
+		gbc_horizontalStrut_2.gridx = 5;
 		gbc_horizontalStrut_2.gridy = 8;
 		frmCvia.getContentPane().add(horizontalStrut_2, gbc_horizontalStrut_2);
-
-		JButton buttonBrowse = new JButton("Open PDF Files");
-		GridBagConstraints gbc_buttonBrowse = new GridBagConstraints();
-		gbc_buttonBrowse.insets = new Insets(0, 0, 5, 5);
-		gbc_buttonBrowse.gridx = 1;
-		gbc_buttonBrowse.gridy = 9;
-		frmCvia.getContentPane().add(buttonBrowse, gbc_buttonBrowse);
-		buttonBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser c = new JFileChooser();
-				c.setMultiSelectionEnabled(true); // returns a array of File objects
-				int rVal = c.showOpenDialog(null);
-				if (rVal == JFileChooser.APPROVE_OPTION) {
-					File[] files = c.getSelectedFiles();
-					originalFiles = c.getSelectedFiles();
-					resultIndex=new int[files.length];
-					for (int i = 0; i < files.length; i++) {
-						DefaultTableModel model = (DefaultTableModel) tableFilesOpen.getModel();
-						model.addRow(new Object[]{files[i].getPath(), "?", false});
-						
-						System.out.println(files[i].toString());
-						files[i] = GUIModel.parsePDFFiles(files[i], i);
-						GUIModel.startProcessing(files[i].toString());
-						resultIndex[i]=i;
-					}
-				}
-			}
-		});
 		
-		Component horizontalStrut = Box.createHorizontalStrut(20);
-		GridBagConstraints gbc_horizontalStrut = new GridBagConstraints();
-		gbc_horizontalStrut.insets = new Insets(0, 0, 5, 5);
-		gbc_horizontalStrut.gridx = 2;
-		gbc_horizontalStrut.gridy = 9;
-		frmCvia.getContentPane().add(horizontalStrut, gbc_horizontalStrut);
-
-		JButton buttonSaveResults = new JButton("Save Keywords");
-		GridBagConstraints gbc_buttonSaveResults = new GridBagConstraints();
-		gbc_buttonSaveResults.insets = new Insets(0, 0, 5, 5);
-		gbc_buttonSaveResults.gridx = 3;
-		gbc_buttonSaveResults.gridy = 9;
-		frmCvia.getContentPane().add(buttonSaveResults, gbc_buttonSaveResults);
-		buttonSaveResults.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//int index = comboBox.getSelectedIndex();
-				String keywords = textAreaKeyWords.getText();
-				saveJobKeywords(selectedJob, keywords);
-			}
-		});
-		
-		JButton btnSaveMarkedFiles = new JButton("Save Marked Files");
-		GridBagConstraints gbc_btnSaveMarkedFiles = new GridBagConstraints();
-		gbc_btnSaveMarkedFiles.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSaveMarkedFiles.gridx = 4;
-		gbc_btnSaveMarkedFiles.gridy = 9;
-		frmCvia.getContentPane().add(btnSaveMarkedFiles, gbc_btnSaveMarkedFiles);
-		btnSaveMarkedFiles.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String saveFileList = "";
-				for (int i = 0; i < tableFilesOpen.getRowCount(); i++) {
-					if ((Boolean) tableFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
-						saveFileList = saveFileList.concat((String) tableFilesOpen.getModel().getValueAt(i, 0) + "\n");
+				JButton buttonSaveResults = new JButton("Save Keywords");
+				GridBagConstraints gbc_buttonSaveResults = new GridBagConstraints();
+				gbc_buttonSaveResults.insets = new Insets(0, 0, 5, 5);
+				gbc_buttonSaveResults.gridx = 4;
+				gbc_buttonSaveResults.gridy = 9;
+				frmCvia.getContentPane().add(buttonSaveResults, gbc_buttonSaveResults);
+				buttonSaveResults.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						//int index = comboBox.getSelectedIndex();
+						String keywords = textAreaKeyWords.getText();
+						saveJobKeywords(selectedJob, keywords);
 					}
-				}
-				if (!saveFileList.isEmpty()) {
-					writeTextToFile(saveFileList, System.getProperty("user.dir")+ "\\"+ FILENAME_SAVED_CVS);
+				});
+				
+		btnSeeDetailsOf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rowIndex = tableFilesOpen.getSelectedRow();
+				int colIndex = tableFilesOpen.getSelectedColumn();
+				
+				if (colIndex == 0) {
+					String CVDetails = GUIModel.getCVDetails(resultIndex[rowIndex]);
+					textAreaCVDetails.setText(CVDetails);
 				}
 			}
 		});
-
-		JButton buttonAnalyze = new JButton("Start Analyzing");
-		GridBagConstraints gbc_buttonAnalyze = new GridBagConstraints();
-		gbc_buttonAnalyze.anchor = GridBagConstraints.EAST;
-		gbc_buttonAnalyze.insets = new Insets(0, 0, 5, 5);
-		gbc_buttonAnalyze.gridx = 5;
-		gbc_buttonAnalyze.gridy = 9;
-		frmCvia.getContentPane().add(buttonAnalyze, gbc_buttonAnalyze);
 		
 		Component verticalStrut_1 = Box.createVerticalStrut(3);
 		GridBagConstraints gbc_verticalStrut_1 = new GridBagConstraints();
 		gbc_verticalStrut_1.insets = new Insets(0, 0, 0, 5);
-		gbc_verticalStrut_1.gridx = 4;
+		gbc_verticalStrut_1.gridx = 3;
 		gbc_verticalStrut_1.gridy = 10;
 		frmCvia.getContentPane().add(verticalStrut_1, gbc_verticalStrut_1);
-		buttonAnalyze.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String[][] results = GUIModel.search(textAreaKeyWords.getText());
-				
-				DefaultTableModel dtm = (DefaultTableModel) tableFilesOpen.getModel();
-				dtm.setRowCount(0);
-				for (int i = 0; i < results.length; i++) {
-					System.out.println(results[i][1]);
-					dtm.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
-					resultIndex[i]=Integer.parseInt(results[i][0]);
-				}
-			}
-		});
 	}
 	
 	private void loadJobList() {
