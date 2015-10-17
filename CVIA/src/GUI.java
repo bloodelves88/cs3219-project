@@ -307,6 +307,7 @@ public class GUI {
 				if (!txtEnterNewJob.getText().equals("")) {
 					comboBox.addItem(txtEnterNewJob.getText());
 					txtEnterNewJob.setText("");
+					comboBox.setSelectedIndex(comboBox.getItemCount() - 1);
 				}
 			}
 		});
@@ -343,7 +344,10 @@ public class GUI {
 					public void actionPerformed(ActionEvent e) {
 						//int index = comboBox.getSelectedIndex();
 						String keywords = textAreaKeyWords.getText();
-						saveJobKeywords(selectedJob, keywords);
+						int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to save these keywords (the previous list will be overwritten)?", "Are you sure?",  JOptionPane.YES_NO_OPTION);
+						if (reply == JOptionPane.YES_OPTION) {
+							saveJobKeywords(selectedJob, keywords);
+						}
 					}
 				});
 				
