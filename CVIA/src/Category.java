@@ -18,6 +18,10 @@ public class Category {
 		String tags="",store="";
 		int index=0;
 		try {
+			if(portions.isEmpty())
+			{
+				portions.add("Personal Details");
+			}
 			Scanner txtFile=new Scanner(fr);
 			while(txtFile.hasNextLine())
 			{
@@ -27,10 +31,6 @@ public class Category {
 				{
 					if(tags.contains(subheadings.get(i))&&(st.countTokens()<5))
 					{
-						if(portions.isEmpty())
-						{
-							portions.add("Personal Details");
-						}
 						portions.add(store);
 						portions.add(tags);
 						store="";
