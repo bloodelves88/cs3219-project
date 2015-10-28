@@ -1,6 +1,6 @@
-Java
-C++
-Algorithm
-Design
-Jellybean
-Ice Cream Sandwich
+Java~1
+C++~1
+Algorithm~1
+Design~1
+Jellybean~1
+Ice Cream Sandwich~1

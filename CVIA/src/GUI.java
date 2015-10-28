@@ -18,6 +18,8 @@ import javax.swing.JButton;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -42,6 +44,7 @@ import javax.swing.JCheckBox;
 public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
 	private static final String FILENAME_JOB_LIST = "Job List.txt";
+	private static final String DEFAULT_KEYWORD_WEIGHT = "1";
 
 	private File[] originalFiles;
 	private int[] resultIndex;
@@ -51,7 +54,7 @@ public class GUI {
 	private String keywords = "";
 	private String selectedJob = "";
 	private JTextField txtEnterNewJob;
-	private JTextArea textAreaKeyWords;
+	private JTable keywordsTable;
 	/**
 	 * Launch the application.
 	 */
@@ -97,38 +100,30 @@ public class GUI {
 		frmCvia.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, Double.MIN_VALUE};
 		frmCvia.getContentPane().setLayout(gridBagLayout);
-
-		// Struts for padding
-		Component verticalStrut_top = Box.createVerticalStrut(1);
-		GridBagConstraints gbc_verticalStrut_top = new GridBagConstraints();
-		gbc_verticalStrut_top.insets = new Insets(0, 0, 5, 5);
-		gbc_verticalStrut_top.gridx = 3;
-		gbc_verticalStrut_top.gridy = 0;
-		frmCvia.getContentPane().add(verticalStrut_top, gbc_verticalStrut_top);
 
 		Component horizontalStrut_left = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_left = new GridBagConstraints();
 		gbc_horizontalStrut_left.insets = new Insets(0, 0, 5, 5);
 		gbc_horizontalStrut_left.gridx = 0;
-		gbc_horizontalStrut_left.gridy = 8;
+		gbc_horizontalStrut_left.gridy = 7;
 		frmCvia.getContentPane().add(horizontalStrut_left, gbc_horizontalStrut_left);
 
 		Component horizontalStrut_right = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_right = new GridBagConstraints();
 		gbc_horizontalStrut_right.insets = new Insets(0, 0, 5, 0);
 		gbc_horizontalStrut_right.gridx = 5;
-		gbc_horizontalStrut_right.gridy = 8;
+		gbc_horizontalStrut_right.gridy = 7;
 		frmCvia.getContentPane().add(horizontalStrut_right, gbc_horizontalStrut_right);
 
 		Component verticalStrut_bottom = Box.createVerticalStrut(3);
 		GridBagConstraints gbc_verticalStrut_bottom = new GridBagConstraints();
 		gbc_verticalStrut_bottom.insets = new Insets(0, 0, 0, 5);
 		gbc_verticalStrut_bottom.gridx = 3;
-		gbc_verticalStrut_bottom.gridy = 10;
+		gbc_verticalStrut_bottom.gridy = 9;
 		frmCvia.getContentPane().add(verticalStrut_bottom, gbc_verticalStrut_bottom);
 
 		// Labels
@@ -136,14 +131,14 @@ public class GUI {
 		GridBagConstraints gbc_lblFilesOpened = new GridBagConstraints();
 		gbc_lblFilesOpened.insets = new Insets(0, 0, 5, 5);
 		gbc_lblFilesOpened.gridx = 1;
-		gbc_lblFilesOpened.gridy = 1;
+		gbc_lblFilesOpened.gridy = 0;
 		frmCvia.getContentPane().add(lblFilesOpened, gbc_lblFilesOpened);
 
 		JLabel lblCvDetails = new JLabel("CV Details:");
 		GridBagConstraints gbc_lblCvDetails = new GridBagConstraints();
 		gbc_lblCvDetails.insets = new Insets(0, 0, 5, 5);
 		gbc_lblCvDetails.gridx = 1;
-		gbc_lblCvDetails.gridy = 3;
+		gbc_lblCvDetails.gridy = 2;
 		frmCvia.getContentPane().add(lblCvDetails, gbc_lblCvDetails);
 
 		JLabel lblJob = new JLabel("Job:");
@@ -151,14 +146,14 @@ public class GUI {
 		GridBagConstraints gbc_lblJob = new GridBagConstraints();
 		gbc_lblJob.insets = new Insets(0, 0, 5, 5);
 		gbc_lblJob.gridx = 1;
-		gbc_lblJob.gridy = 5;
+		gbc_lblJob.gridy = 4;
 		frmCvia.getContentPane().add(lblJob, gbc_lblJob);
 
 		JLabel lblKeyWords = new JLabel("Key words:");
 		GridBagConstraints gbc_lblKeyWords = new GridBagConstraints();
 		gbc_lblKeyWords.insets = new Insets(0, 0, 5, 5);
 		gbc_lblKeyWords.gridx = 1;
-		gbc_lblKeyWords.gridy = 7;
+		gbc_lblKeyWords.gridy = 6;
 		frmCvia.getContentPane().add(lblKeyWords, gbc_lblKeyWords);
 
 		// Text Area & Text Fields
@@ -169,7 +164,7 @@ public class GUI {
 		gbc_textAreaCVDetails.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaCVDetails.fill = GridBagConstraints.BOTH;
 		gbc_textAreaCVDetails.gridx = 1;
-		gbc_textAreaCVDetails.gridy = 4;
+		gbc_textAreaCVDetails.gridy = 3;
 		textAreaCVDetails.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		JScrollPane textAreaCVDetailsScrollPane = new JScrollPane(textAreaCVDetails);
 		frmCvia.getContentPane().add(textAreaCVDetailsScrollPane, gbc_textAreaCVDetails);
@@ -179,22 +174,11 @@ public class GUI {
 		gbc_txtEnterNewJob.insets = new Insets(0, 0, 5, 5);
 		gbc_txtEnterNewJob.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtEnterNewJob.gridx = 3;
-		gbc_txtEnterNewJob.gridy = 6;
+		gbc_txtEnterNewJob.gridy = 5;
 		frmCvia.getContentPane().add(txtEnterNewJob, gbc_txtEnterNewJob);
 		txtEnterNewJob.setColumns(10);
 
-		textAreaKeyWords = new JTextArea();
-		GridBagConstraints gbc_textAreaKeyWords = new GridBagConstraints();
-		gbc_textAreaKeyWords.gridwidth = 4;
-		gbc_textAreaKeyWords.insets = new Insets(0, 0, 5, 5);
-		gbc_textAreaKeyWords.fill = GridBagConstraints.BOTH;
-		gbc_textAreaKeyWords.gridx = 1;
-		gbc_textAreaKeyWords.gridy = 8;
-		textAreaKeyWords.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-		JScrollPane textAreaKeyWordsScrollPane = new JScrollPane(textAreaKeyWords);
-		frmCvia.getContentPane().add(textAreaKeyWordsScrollPane, gbc_textAreaKeyWords);
-
-		// Table
+		// Files Open Table
 		final JTable tableFilesOpen = new JTable() {
 			// Sets the type of the column in the table
 			// Needed to make checkboxes in the table 
@@ -210,11 +194,11 @@ public class GUI {
 				}
 			}
 		};
-		DefaultTableModel tableModel = new DefaultTableModel();
+		DefaultTableModel filesOpenTableModel = new DefaultTableModel();
 		tableFilesOpen.setAutoCreateRowSorter(true);
 
-		tableModel.setColumnIdentifiers(new Object[] {"Files", "Score", "Keep?"});
-		tableFilesOpen.setModel(tableModel);
+		filesOpenTableModel.setColumnIdentifiers(new Object[] {"Files", "Score", "Keep?"});
+		tableFilesOpen.setModel(filesOpenTableModel);
 
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
@@ -229,9 +213,39 @@ public class GUI {
 		gbc_textAreaFilesOpen.insets = new Insets(0, 0, 5, 5);
 		gbc_textAreaFilesOpen.fill = GridBagConstraints.BOTH;
 		gbc_textAreaFilesOpen.gridx = 1;
-		gbc_textAreaFilesOpen.gridy = 2;
+		gbc_textAreaFilesOpen.gridy = 1;
 		tableFilesOpen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		frmCvia.getContentPane().add(textAreaFilesOpenScrollPane, gbc_textAreaFilesOpen);
+
+		// Keywords Table
+		keywordsTable = new JTable() {
+			// Sets the input type of the column in the table
+			@Override
+			public Class getColumnClass(int column) {
+				switch (column) {
+				case 0:
+					return String.class;
+				default:
+					return Integer.class;
+				}
+			}
+		};
+		GridBagConstraints gbc_table = new GridBagConstraints();
+		gbc_table.gridwidth = 4;
+		gbc_table.insets = new Insets(0, 0, 5, 5);
+		gbc_table.fill = GridBagConstraints.BOTH;
+		gbc_table.gridx = 1;
+		gbc_table.gridy = 7;
+		JScrollPane keywordsTableScrollPane = new JScrollPane(keywordsTable);
+		frmCvia.getContentPane().add(keywordsTableScrollPane, gbc_table);
+
+		DefaultTableModel keywordsTableModel = new DefaultTableModel();
+		keywordsTable.setAutoCreateRowSorter(true);
+
+		keywordsTableModel.setColumnIdentifiers(new Object[] {"Keywords", "Weight"});
+		keywordsTable.setModel(keywordsTableModel);
+		keywordsTable.getColumnModel().getColumn(0).setMinWidth(400);
+		keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
 
 		// Job Dropdown List
 		final JComboBox<String> comboBox = new JComboBox<String>();
@@ -240,29 +254,44 @@ public class GUI {
 		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 6;
+		gbc_comboBox.gridy = 5;
 		frmCvia.getContentPane().add(comboBox, gbc_comboBox);
 		for (int i = 0; i < jobList.length; i++) {
 			comboBox.addItem(jobList[i]);
 		}
 		selectedJob = (String) comboBox.getSelectedItem();
-		openJobKeywords(textAreaKeyWords, selectedJob);
+		openJobKeywords(keywordsTable, selectedJob);
 
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				selectedJob = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
-				openJobKeywords(textAreaKeyWords, selectedJob);
+				openJobKeywords(keywordsTable, selectedJob);
 			}
 		});
-		
+
 		// Checkbox
 		JCheckBox customRankingCheckBox = new JCheckBox("Custom Ranking");
 		GridBagConstraints gbc_customRankingCheckBox = new GridBagConstraints();
 		gbc_customRankingCheckBox.insets = new Insets(0, 0, 5, 5);
 		gbc_customRankingCheckBox.gridx = 4;
-		gbc_customRankingCheckBox.gridy = 7;
+		gbc_customRankingCheckBox.gridy = 6;
 		frmCvia.getContentPane().add(customRankingCheckBox, gbc_customRankingCheckBox);
 		customRankingCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
+
+		customRankingCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (customRankingCheckBox.isSelected() == true) {
+					((DefaultTableModel) keywordsTable.getModel()).addColumn(null);
+					while (keywordsTable.getColumnCount() > 2 ) {
+						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
+					}
+					keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+					keywordsTable.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
+				} else {
+					keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
+				}
+			}
+		});
 
 		// Buttons
 		JButton buttonBrowse = new JButton("Open PDF Files");
@@ -270,7 +299,7 @@ public class GUI {
 		gbc_buttonBrowse.fill = GridBagConstraints.HORIZONTAL;
 		gbc_buttonBrowse.insets = new Insets(0, 0, 5, 5);
 		gbc_buttonBrowse.gridx = 3;
-		gbc_buttonBrowse.gridy = 1;
+		gbc_buttonBrowse.gridy = 0;
 		frmCvia.getContentPane().add(buttonBrowse, gbc_buttonBrowse);
 		buttonBrowse.addActionListener(new ActionListener() {
 			@Override
@@ -287,7 +316,7 @@ public class GUI {
 					originalFiles = c.getSelectedFiles();
 					resultIndex=new int[files.length];
 					for (int i = 0; i < files.length; i++) {
-						tableModel.addRow(new Object[]{files[i].getPath(), "?", false});
+						filesOpenTableModel.addRow(new Object[]{files[i].getPath(), "?", false});
 
 						System.out.println(files[i].toString());
 						files[i] = GUIModel.parsePDFFiles(files[i], i);
@@ -303,17 +332,30 @@ public class GUI {
 		gbc_buttonAnalyze.fill = GridBagConstraints.HORIZONTAL;
 		gbc_buttonAnalyze.insets = new Insets(0, 0, 5, 5);
 		gbc_buttonAnalyze.gridx = 4;
-		gbc_buttonAnalyze.gridy = 1;
+		gbc_buttonAnalyze.gridy = 0;
 		frmCvia.getContentPane().add(buttonAnalyze, gbc_buttonAnalyze);
 		buttonAnalyze.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String[][] results = GUIModel.search(textAreaKeyWords.getText());
+				String[] keywords = new String[keywordsTable.getRowCount()];
+				//String[][] keywords = new String[keywordsTable.getRowCount()][2];
+				for (int i = 0; i < keywordsTable.getRowCount(); i++) {
+					keywords[i] = (String) keywordsTable.getModel().getValueAt(i, 0);
+					/*
+					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
+					if (customRankingCheckBox.isSelected() == true) {
+						keywords[i][1] = (String) keywordsTable.getModel().getValueAt(i, 1);
+					} else {
+						keywords[i][1] = DEFAULT_KEYWORD_WEIGHT; // or whatever other default
+					}
+					*/
+				}
+				String[][] results = GUIModel.search(keywords);
 
-				tableModel.setRowCount(0);
+				filesOpenTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
-					tableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
+					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
 					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
 			}
@@ -324,7 +366,7 @@ public class GUI {
 		gbc_btnSeeDetailsOf.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSeeDetailsOf.insets = new Insets(0, 0, 5, 5);
 		gbc_btnSeeDetailsOf.gridx = 3;
-		gbc_btnSeeDetailsOf.gridy = 3;
+		gbc_btnSeeDetailsOf.gridy = 2;
 		frmCvia.getContentPane().add(btnSeeDetailsOf, gbc_btnSeeDetailsOf);
 		btnSeeDetailsOf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -345,7 +387,7 @@ public class GUI {
 		GridBagConstraints gbc_btnSaveMarkedFiles = new GridBagConstraints();
 		gbc_btnSaveMarkedFiles.insets = new Insets(0, 0, 5, 5);
 		gbc_btnSaveMarkedFiles.gridx = 4;
-		gbc_btnSaveMarkedFiles.gridy = 3;
+		gbc_btnSaveMarkedFiles.gridy = 2;
 		frmCvia.getContentPane().add(btnSaveMarkedFiles, gbc_btnSaveMarkedFiles);
 		btnSaveMarkedFiles.addActionListener(new ActionListener() {
 			@Override
@@ -370,7 +412,7 @@ public class GUI {
 		gbc_btnAddJob.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAddJob.insets = new Insets(0, 0, 5, 5);
 		gbc_btnAddJob.gridx = 4;
-		gbc_btnAddJob.gridy = 6;
+		gbc_btnAddJob.gridy = 5;
 		frmCvia.getContentPane().add(btnAddJob, gbc_btnAddJob);
 		btnAddJob.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -386,13 +428,16 @@ public class GUI {
 		GridBagConstraints gbc_buttonSaveResults = new GridBagConstraints();
 		gbc_buttonSaveResults.insets = new Insets(0, 0, 5, 5);
 		gbc_buttonSaveResults.gridx = 4;
-		gbc_buttonSaveResults.gridy = 9;
+		gbc_buttonSaveResults.gridy = 8;
 		frmCvia.getContentPane().add(buttonSaveResults, gbc_buttonSaveResults);
 		buttonSaveResults.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//int index = comboBox.getSelectedIndex();
-				String keywords = textAreaKeyWords.getText();
+				String keywords = "";
+				for (int i = 0; i < keywordsTable.getRowCount(); i++) {
+					keywords = keywords.concat((String) keywordsTable.getModel().getValueAt(i, 0) + "~" + keywordsTable.getModel().getValueAt(i, 1) + "\n");
+				}
 				int reply = JOptionPane.showConfirmDialog(frmCvia, "Are you sure you want to save these keywords (the previous list will be overwritten)?", "Are you sure?",  JOptionPane.YES_NO_OPTION);
 				if (reply == JOptionPane.YES_OPTION) {
 					saveJobKeywords(selectedJob, keywords);
@@ -459,13 +504,17 @@ public class GUI {
 		loadJobList();
 	}
 
-	private void openJobKeywords(final JTextArea textAreaKeyWords, String itemName) {
+	private void openJobKeywords(final JTable keywordsTable, String itemName) {
+		((DefaultTableModel) keywordsTable.getModel()).setRowCount(0);
 		for (int i = 0; i < jobList.length; i++) {
 			if (itemName.equals(jobList[i])) {
 				try {
-					keywords = readFile(System.getProperty("user.dir")+"\\CViA\\" + jobList[i] + ".txt");
-					textAreaKeyWords.setText(keywords);
-					textAreaKeyWords.setCaretPosition(0);
+					String allKeywords = readFile(System.getProperty("user.dir")+"\\CViA\\" + jobList[i] + ".txt");
+					String keywords[] = allKeywords.split("\\r?\\n");
+					for (int k = 0; k < keywords.length; k++) {
+						String keywordWeightPair[] = keywords[k].split("~");
+						((DefaultTableModel) keywordsTable.getModel()).addRow(new Object[]{keywordWeightPair[0], keywordWeightPair[1]});
+					}
 				} catch (IOException e1) {
 					System.out.println("An exception occured in opening the keywords. ");
 					e1.printStackTrace();
@@ -473,7 +522,6 @@ public class GUI {
 				return;
 			}
 		}
-		textAreaKeyWords.setText("");
 	}
 }
 

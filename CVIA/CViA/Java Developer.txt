@@ -1,4 +1,4 @@
-Java
-C++
-Algorithm
-Java 9
+Java~1
+C++~1
+Algorithm~1
+Java 9~1
