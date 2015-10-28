@@ -37,6 +37,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.JCheckBox;
 
 public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
@@ -85,6 +86,7 @@ public class GUI {
 	 * 		Text Area & Fields
 	 * 		Table
 	 * 		Job Dropdown List
+	 * 		Checkbox
 	 * 		Buttons 
 	 */
 	private void initialize() {
@@ -252,6 +254,15 @@ public class GUI {
 				openJobKeywords(textAreaKeyWords, selectedJob);
 			}
 		});
+		
+		// Checkbox
+		JCheckBox customRankingCheckBox = new JCheckBox("Custom Ranking");
+		GridBagConstraints gbc_customRankingCheckBox = new GridBagConstraints();
+		gbc_customRankingCheckBox.insets = new Insets(0, 0, 5, 5);
+		gbc_customRankingCheckBox.gridx = 4;
+		gbc_customRankingCheckBox.gridy = 7;
+		frmCvia.getContentPane().add(customRankingCheckBox, gbc_customRankingCheckBox);
+		customRankingCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
 
 		// Buttons
 		JButton buttonBrowse = new JButton("Open PDF Files");
