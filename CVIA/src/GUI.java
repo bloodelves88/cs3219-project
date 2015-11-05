@@ -314,7 +314,9 @@ public class GUI {
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
 					originalFiles = c.getSelectedFiles();
+					
 					resultIndex=new int[files.length];
+					filesOpenTableModel.setRowCount(0);
 					for (int i = 0; i < files.length; i++) {
 						filesOpenTableModel.addRow(new Object[]{files[i].getPath(), "?", false});
 
