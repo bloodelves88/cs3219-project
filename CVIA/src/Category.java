@@ -52,7 +52,6 @@ public class Category {
 						}
 					}
 				}
-				//System.out.println(st.countTokens());
 				if(st.countTokens()<2)
 				{
 					store+=tags;
