@@ -5,6 +5,7 @@ public class GUIModel {
 	private static Parser parser= new Parser();
 	private static TextRetrieval textRetrieval=new TextRetrieval();
 	private static Stemmer stemmer=new Stemmer();
+	private static ConvertforDisplay convertforDisplay = new ConvertforDisplay();
 	
 	/**
      * 
@@ -42,8 +43,8 @@ public class GUIModel {
 			
 	}
 	
-	public static String getCVDetails(int index)
+	public static String getCVDetails(File file,int index)
 	{
-		return textRetrieval.getCVDetails(System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
+		return convertforDisplay.getPersonalParticulars(file,textRetrieval,System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
 	}
 }

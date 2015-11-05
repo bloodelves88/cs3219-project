@@ -1,12 +1,20 @@
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
+
 import java.util.Scanner;
+
+
 
 public class TextRetrieval {
 
@@ -224,17 +232,9 @@ public class TextRetrieval {
 		return combinedResult;
 	}
 	
-	public String getCVDetails(String path)
+	public ArrayList<String> getCVDetails(String path)
 	{
 		ArrayList<String> list=fileIndex.get(path);
-		String results="";
-		
-			results=list.get(1);
-			results=results.replaceAll(" +", " ");
-			if(results.contains("page1"))
-			{
-				results="LinkedIn Profile : " + results.substring(results.lastIndexOf("page1")+5, results.length())+ System.getProperty("line.separator") +"Please contact through LinkedIn";
-			}
-		return results;
+		return list;
 	}
 }

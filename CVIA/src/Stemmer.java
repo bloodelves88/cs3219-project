@@ -34,7 +34,7 @@ public class Stemmer {
         } catch (Exception e) {
         	
         }
-        System.out.println(phraseList);
+        //System.out.println(phraseList);
         
         
         wordList = readFileToList(fileName);
@@ -101,7 +101,7 @@ public class Stemmer {
                     		wordList.add(temp);
                     	}
                     }
-                    System.out.println(wordList);
+                    //System.out.println(wordList);
                 	firstLine = secondLine;
                 } else {
                 	firstLine = "";

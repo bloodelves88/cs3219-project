@@ -26,6 +26,7 @@ public class Category {
 			while(txtFile.hasNextLine())
 			{
 				tags=txtFile.nextLine().toLowerCase();
+				tags=tags.replaceAll("\t", "   ");
 				StringTokenizer st=new StringTokenizer(tags);
 				for(int i=0;i<subheadings.size();i++)
 				{
@@ -40,8 +41,8 @@ public class Category {
 					{
 						index=(tags.lastIndexOf(subheadings.get(i)))+subheadings.get(i).length();
 						if(index+2<tags.length())
-						{
-							if(Character.isWhitespace(tags.charAt(index))&&Character.isWhitespace(tags.charAt(index+2)))
+						{							
+							if(Character.isWhitespace(tags.charAt(index+1))&&Character.isWhitespace(tags.charAt(index+2)))
 							{
 								portions.add(store);
 								portions.add(tags.substring(0,index));
@@ -51,7 +52,13 @@ public class Category {
 						}
 					}
 				}
-					store+=" " + tags;
+				//System.out.println(st.countTokens());
+				if(st.countTokens()<2)
+				{
+					store+=tags;
+				}else{
+					store+=";;" + tags;
+				}
 			}
 			portions.add(store);
 			txtFile.close();

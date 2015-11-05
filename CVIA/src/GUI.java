@@ -194,13 +194,13 @@ public class GUI {
 				}
 			}
 		};
-		DefaultTableModel filesOpenTableModel = new DefaultTableModel();
+		final DefaultTableModel filesOpenTableModel = new DefaultTableModel();
 		tableFilesOpen.setAutoCreateRowSorter(true);
 
 		filesOpenTableModel.setColumnIdentifiers(new Object[] {"Files", "Score", "Keep?"});
 		tableFilesOpen.setModel(filesOpenTableModel);
 
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
 		tableFilesOpen.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
 		tableFilesOpen.getColumnModel().getColumn(0).setMinWidth(400);
@@ -270,7 +270,7 @@ public class GUI {
 		});
 
 		// Checkbox
-		JCheckBox customRankingCheckBox = new JCheckBox("Custom Ranking");
+		final JCheckBox customRankingCheckBox = new JCheckBox("Custom Ranking");
 		GridBagConstraints gbc_customRankingCheckBox = new GridBagConstraints();
 		gbc_customRankingCheckBox.insets = new Insets(0, 0, 5, 5);
 		gbc_customRankingCheckBox.gridx = 4;
@@ -374,7 +374,7 @@ public class GUI {
 				int colIndex = tableFilesOpen.getSelectedColumn();
 
 				if (colIndex == 0) {
-					String CVDetails = GUIModel.getCVDetails(resultIndex[rowIndex]);
+					String CVDetails = GUIModel.getCVDetails(originalFiles[resultIndex[rowIndex]],resultIndex[rowIndex]);
 					textAreaCVDetails.setText(CVDetails);
 					textAreaCVDetails.setCaretPosition(0);
 				} else {
