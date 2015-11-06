@@ -339,13 +339,10 @@ public class GUI {
 		buttonAnalyze.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//String[] keywords = new String[keywordsTable.getRowCount()];
 				String[][] keywords = new String[keywordsTable.getRowCount()][2];
 				boolean isCustomWeights = false;
 				
-				for (int i = 0; i < keywordsTable.getRowCount(); i++) {
-					//keywords[i] = (String) keywordsTable.getModel().getValueAt(i, 0);
-					
+				for (int i = 0; i < keywordsTable.getRowCount(); i++) {					
 					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
 					if (customRankingCheckBox.isSelected() == true) {
 						keywords[i][1] = String.valueOf(keywordsTable.getModel().getValueAt(i, 1));
