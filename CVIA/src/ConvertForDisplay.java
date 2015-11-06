@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
-public class ConvertforDisplay {
+public class ConvertForDisplay {
 	public String getPersonalParticulars(File file,TextRetrieval textretrieval,String path)
 	{
 		String name=getName(file);

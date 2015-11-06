@@ -5,7 +5,7 @@ public class MainPresenter {
 	private static Parser parser= new Parser();
 	private static TextRetrieval textRetrieval=new TextRetrieval();
 	private static Stemmer stemmer=new Stemmer();
-	private static ConvertforDisplay convertforDisplay = new ConvertforDisplay();
+	private static ConvertForDisplay convertForDisplay = new ConvertForDisplay();
 	
 	/**
      * 
@@ -45,7 +45,7 @@ public class MainPresenter {
 	
 	public static String getCVDetails(File file,int index)
 	{
-		return convertforDisplay.getPersonalParticulars(file,textRetrieval,System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
+		return convertForDisplay.getPersonalParticulars(file,textRetrieval,System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
 	}
 	
 	public static void ClearData()
