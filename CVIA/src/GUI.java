@@ -314,15 +314,15 @@ public class GUI {
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
 					originalFiles = c.getSelectedFiles();
-					GUIModel.ClearData();
+					MainPresenter.ClearData();
 					resultIndex=new int[files.length];
 					filesOpenTableModel.setRowCount(0);
 					for (int i = 0; i < files.length; i++) {
 						filesOpenTableModel.addRow(new Object[]{files[i].getPath(), "?", false});
 
 						System.out.println(files[i].toString());
-						files[i] = GUIModel.parsePDFFiles(files[i], i);
-						GUIModel.startProcessing(files[i].toString());
+						files[i] = MainPresenter.parsePDFFiles(files[i], i);
+						MainPresenter.startProcessing(files[i].toString());
 						resultIndex[i]=i;
 					}
 				}
@@ -356,7 +356,7 @@ public class GUI {
 					}
 					
 				}
-				String[][] results = GUIModel.search(keywords, isCustomWeights);
+				String[][] results = MainPresenter.search(keywords, isCustomWeights);
 
 				filesOpenTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
@@ -380,7 +380,7 @@ public class GUI {
 				int colIndex = tableFilesOpen.getSelectedColumn();
 
 				if (colIndex == 0) {
-					String CVDetails = GUIModel.getCVDetails(originalFiles[resultIndex[rowIndex]],resultIndex[rowIndex]);
+					String CVDetails = MainPresenter.getCVDetails(originalFiles[resultIndex[rowIndex]],resultIndex[rowIndex]);
 					textAreaCVDetails.setText(CVDetails);
 					textAreaCVDetails.setCaretPosition(0);
 				} else {
