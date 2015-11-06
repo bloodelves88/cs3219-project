@@ -227,7 +227,7 @@ public class TextRetrieval {
 	{
 		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
 	}
-	public String[][] getWeightedResults(String[][] terms)
+	public String[][] getWeightedResults(String[][] terms,boolean customWeights)
 	{
 		String[] results=new String[directIndex.size()];
 		double[] indexes=new double[directIndex.size()];
@@ -236,7 +236,12 @@ public class TextRetrieval {
 		double similarity=0;
 		for(String str:directIndex.keys())
 		{
-			similarity=JaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+			if(customWeights)
+			{
+				similarity=WeightedJaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);				
+			}else{
+				similarity=JaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+			}
 			if (counter == 0){
 				results[counter] = str;
 				indexes [counter] = similarity;
