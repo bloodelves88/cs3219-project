@@ -348,7 +348,7 @@ public class GUI {
 					
 					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
 					if (customRankingCheckBox.isSelected() == true) {
-						keywords[i][1] = (String) keywordsTable.getModel().getValueAt(i, 1);
+						keywords[i][1] = String.valueOf(keywordsTable.getModel().getValueAt(i, 1));
 						isCustomWeights = true;
 					} else {
 						keywords[i][1] = DEFAULT_KEYWORD_WEIGHT; // or whatever other default
