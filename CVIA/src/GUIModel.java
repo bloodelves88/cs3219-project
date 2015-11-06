@@ -35,7 +35,7 @@ public class GUIModel {
 		textRetrieval.AddPortions(fileportions, fileName);
 	}
 	
-	public static String[][] search(String[] keywords)
+	public static String[][] search(String[][] keywords)
 	{
 		//String[] lines=keywords.split("\\r?\\n");
 		

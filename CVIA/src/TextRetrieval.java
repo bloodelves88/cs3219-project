@@ -188,30 +188,34 @@ public class TextRetrieval {
 			}
 	}
 
-	private double CosineSimilarity(String[] fileTerms,String[]terms)
+	private double JaccardCoefficient(String[] fileTerms,String[][]terms)
 	{
 		double commonTerms=0.0;
 		for(int i=0;i<terms.length;i++)
 		{
-			if(Arrays.asList(fileTerms).contains(terms[i].toLowerCase()))
+			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
 			{
 				commonTerms++;
 			}
 		}
-		return (commonTerms)/(Math.sqrt(Math.pow(fileTerms.length,2)*Math.pow(terms.length,2)));
+		return (commonTerms)/(fileTerms.length+terms.length-commonTerms);
 	}
 	
-	private double simpleWeights(String[] fileTerms,String[]terms)
+	private double WeightedJaccardCoefficient(String[] fileTerms,String[][]terms)
 	{
-		double commonTerms=0.0;
+		double commonTerms=0.0,weightedSum=0.0;
 		for(int i=0;i<terms.length;i++)
 		{
-			if(Arrays.asList(fileTerms).contains(terms[i].toLowerCase()))
+			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
 			{
-				commonTerms++;
+				commonTerms+=Integer.parseInt(terms[i][1]);
 			}
 		}
-		return (commonTerms)/terms.length;
+		for(int i=0;i<terms.length;i++)
+		{
+			weightedSum+=Integer.parseInt(terms[i][1]);
+		}
+		return (commonTerms)/(weightedSum-commonTerms+fileTerms.length);
 	}
 		
 	public String[] getDocumentsByTerm(String term)
@@ -223,7 +227,7 @@ public class TextRetrieval {
 	{
 		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
 	}
-	public String[][] getWeightedResults(String[] terms)
+	public String[][] getWeightedResults(String[][] terms)
 	{
 		String[] results=new String[directIndex.size()];
 		double[] indexes=new double[directIndex.size()];
@@ -232,7 +236,7 @@ public class TextRetrieval {
 		double similarity=0;
 		for(String str:directIndex.keys())
 		{
-			similarity=CosineSimilarity(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+			similarity=JaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
 			if (counter == 0){
 				results[counter] = str;
 				indexes [counter] = similarity;
