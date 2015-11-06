@@ -40,6 +40,7 @@ import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.JCheckBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class GUI {
 	private static final String FILENAME_SAVED_CVS = "Saved CVs.txt";
@@ -104,6 +105,15 @@ public class GUI {
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 3.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, Double.MIN_VALUE};
 		frmCvia.getContentPane().setLayout(gridBagLayout);
+		
+		JComboBox comboBox_weighting = new JComboBox();
+		comboBox_weighting.setModel(new DefaultComboBoxModel(new String[] {"Default", "Simplified", "Custom Weights"}));
+		GridBagConstraints gbc_comboBox_weighting = new GridBagConstraints();
+		gbc_comboBox_weighting.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBox_weighting.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox_weighting.gridx = 4;
+		gbc_comboBox_weighting.gridy = 6;
+		frmCvia.getContentPane().add(comboBox_weighting, gbc_comboBox_weighting);
 
 		Component horizontalStrut_left = Box.createHorizontalStrut(3);
 		GridBagConstraints gbc_horizontalStrut_left = new GridBagConstraints();
@@ -248,48 +258,24 @@ public class GUI {
 		keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
 
 		// Job Dropdown List
-		final JComboBox<String> comboBox = new JComboBox<String>();
-		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.gridwidth = 2;
-		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 5;
-		frmCvia.getContentPane().add(comboBox, gbc_comboBox);
+		final JComboBox<String> comboBox_Job = new JComboBox<String>();
+		GridBagConstraints gbc_comboBox_Job = new GridBagConstraints();
+		gbc_comboBox_Job.gridwidth = 2;
+		gbc_comboBox_Job.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBox_Job.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox_Job.gridx = 1;
+		gbc_comboBox_Job.gridy = 5;
+		frmCvia.getContentPane().add(comboBox_Job, gbc_comboBox_Job);
 		for (int i = 0; i < jobList.length; i++) {
-			comboBox.addItem(jobList[i]);
+			comboBox_Job.addItem(jobList[i]);
 		}
-		selectedJob = (String) comboBox.getSelectedItem();
+		selectedJob = (String) comboBox_Job.getSelectedItem();
 		openJobKeywords(keywordsTable, selectedJob);
 
-		comboBox.addActionListener(new ActionListener() {
+		comboBox_Job.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				selectedJob = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
 				openJobKeywords(keywordsTable, selectedJob);
-			}
-		});
-
-		// Checkbox
-		final JCheckBox customRankingCheckBox = new JCheckBox("Custom Ranking");
-		GridBagConstraints gbc_customRankingCheckBox = new GridBagConstraints();
-		gbc_customRankingCheckBox.insets = new Insets(0, 0, 5, 5);
-		gbc_customRankingCheckBox.gridx = 4;
-		gbc_customRankingCheckBox.gridy = 6;
-		frmCvia.getContentPane().add(customRankingCheckBox, gbc_customRankingCheckBox);
-		customRankingCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
-
-		customRankingCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (customRankingCheckBox.isSelected() == true) {
-					((DefaultTableModel) keywordsTable.getModel()).addColumn(null);
-					while (keywordsTable.getColumnCount() > 2 ) {
-						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
-					}
-					keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
-					keywordsTable.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
-				} else {
-					keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
-				}
 			}
 		});
 
@@ -340,20 +326,21 @@ public class GUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String[][] keywords = new String[keywordsTable.getRowCount()][2];
-				boolean isCustomWeights = false;
+				//boolean isCustomWeights = false;
+				int selectedAnalyzingMethod = comboBox_weighting.getSelectedIndex();
 				
 				for (int i = 0; i < keywordsTable.getRowCount(); i++) {					
 					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
-					if (customRankingCheckBox.isSelected() == true) {
+					if (selectedAnalyzingMethod == 2) {
 						keywords[i][1] = String.valueOf(keywordsTable.getModel().getValueAt(i, 1));
-						isCustomWeights = true;
+						//isCustomWeights = true;
 					} else {
 						keywords[i][1] = DEFAULT_KEYWORD_WEIGHT; // or whatever other default
-						isCustomWeights = false;
+						//isCustomWeights = false;
 					}
 					
 				}
-				String[][] results = MainPresenter.search(keywords, isCustomWeights);
+				String[][] results = MainPresenter.search(keywords, selectedAnalyzingMethod);
 
 				filesOpenTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
@@ -420,9 +407,9 @@ public class GUI {
 		btnAddJob.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!txtEnterNewJob.getText().equals("")) {
-					comboBox.addItem(txtEnterNewJob.getText());
+					comboBox_Job.addItem(txtEnterNewJob.getText());
 					txtEnterNewJob.setText("");
-					comboBox.setSelectedIndex(comboBox.getItemCount() - 1);
+					comboBox_Job.setSelectedIndex(comboBox_Job.getItemCount() - 1);
 				}
 			}
 		});
