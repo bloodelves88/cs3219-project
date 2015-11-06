@@ -53,7 +53,6 @@ public class GUI {
 	private JFrame frmCvia;
 	private String[] jobList;
 	private String jobListString;
-	private String keywords = "";
 	private String selectedJob = "";
 	private JTextField txtEnterNewJob;
 	private JTable keywordsTable;
@@ -274,13 +273,13 @@ public class GUI {
 
 		comboBox_Job.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selectedJob = (String) ((JComboBox<String>) e.getSource()).getSelectedItem();
+				selectedJob = (String) comboBox_Job.getSelectedItem();
 				openJobKeywords(keywordsTable, selectedJob);
 			}
 		});
 		
-		JComboBox comboBox_weighting = new JComboBox();
-		comboBox_weighting.setModel(new DefaultComboBoxModel(new String[] {"Default", "Simplified", "Custom Weights"}));
+		JComboBox<String> comboBox_weighting = new JComboBox<String>();
+		comboBox_weighting.setModel(new DefaultComboBoxModel<String>(new String[] {"Default", "Simplified", "Custom Weights"}));
 		GridBagConstraints gbc_comboBox_weighting = new GridBagConstraints();
 		gbc_comboBox_weighting.insets = new Insets(0, 0, 5, 5);
 		gbc_comboBox_weighting.fill = GridBagConstraints.HORIZONTAL;
