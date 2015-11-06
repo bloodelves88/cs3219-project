@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -286,6 +287,22 @@ public class GUI {
 		gbc_comboBox_weighting.gridx = 5;
 		gbc_comboBox_weighting.gridy = 6;
 		frmCvia.getContentPane().add(comboBox_weighting, gbc_comboBox_weighting);
+		comboBox_weighting.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (comboBox_weighting.getSelectedIndex() == 2) {
+					((DefaultTableModel) keywordsTable.getModel()).addColumn(null);
+					while(keywordsTable.getColumnCount() > 2) {
+						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
+					}
+					keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+					keywordsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+				} else {
+					if (keywordsTable.getColumnCount() > 1) {
+						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
+					}
+				}
+			}
+		});
 
 		// Buttons
 		JButton buttonBrowse = new JButton("Open PDF Files");
@@ -346,7 +363,6 @@ public class GUI {
 						keywords[i][1] = DEFAULT_KEYWORD_WEIGHT; // or whatever other default
 						//isCustomWeights = false;
 					}
-					
 				}
 				String[][] results = MainPresenter.search(keywords, selectedAnalyzingMethod);
 
@@ -431,7 +447,8 @@ public class GUI {
 		btnAddKeyword.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				keywordsTableModel.addRow(new Object[]{"", Integer.valueOf(DEFAULT_KEYWORD_WEIGHT)});
+				keywordsTableModel.addRow(new Object[]{"", Integer.valueOf(DEFAULT_KEYWORD_WEIGHT)});	
+				keywordsTable.scrollRectToVisible(keywordsTable.getCellRect(keywordsTable.getRowCount()-1, 0, true));
 			}
 		});
 		
