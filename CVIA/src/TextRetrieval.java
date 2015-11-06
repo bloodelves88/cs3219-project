@@ -97,13 +97,18 @@ public class TextRetrieval {
 	}
 	
 	
-	private void DeleteData()
+	public void DeleteData()
 	{
+		ArrayList<String> keys=new ArrayList<String>();
 		if(!directIndex.isEmpty())
 		{
 			for(String str:directIndex.keys())
 			{
-				directIndex.delete(str);
+				keys.add(str);
+			}
+			for(int i=0;i<keys.size();i++)
+			{
+				directIndex.delete(keys.get(i));
 			}
 		}
 		System.out.println(directIndex.size());
@@ -112,7 +117,6 @@ public class TextRetrieval {
 	//Adds the file to the directIndex
 	public void AddFile(String fileName, String[] fileTerms)
 	{		
-		DeleteData();
 		if(!directIndex.contains(fileName))
 		{
 			Set<String> fileSet=new HashSet<String>(Arrays.asList(fileTerms));

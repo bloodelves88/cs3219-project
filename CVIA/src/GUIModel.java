@@ -47,4 +47,9 @@ public class GUIModel {
 	{
 		return convertforDisplay.getPersonalParticulars(file,textRetrieval,System.getProperty("user.dir")+"\\pdfoutput" + index + ".txt");
 	}
+	
+	public static void ClearData()
+	{
+		textRetrieval.DeleteData();
+	}
 }
