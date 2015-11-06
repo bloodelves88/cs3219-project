@@ -96,9 +96,23 @@ public class TextRetrieval {
 		return results;
 	}
 	
+	
+	private void DeleteData()
+	{
+		if(!directIndex.isEmpty())
+		{
+			for(String str:directIndex.keys())
+			{
+				directIndex.delete(str);
+			}
+		}
+		System.out.println(directIndex.size());
+	}
+	
 	//Adds the file to the directIndex
 	public void AddFile(String fileName, String[] fileTerms)
 	{		
+		DeleteData();
 		if(!directIndex.contains(fileName))
 		{
 			Set<String> fileSet=new HashSet<String>(Arrays.asList(fileTerms));
@@ -180,9 +194,22 @@ public class TextRetrieval {
 				commonTerms++;
 			}
 		}
-		return (commonTerms)/(Math.sqrt(Math.pow(fileTerms.length,2)+Math.pow(terms.length,2)));
+		return (commonTerms)/(Math.sqrt(Math.pow(fileTerms.length,2)*Math.pow(terms.length,2)));
 	}
 	
+	private double simpleWeights(String[] fileTerms,String[]terms)
+	{
+		double commonTerms=0.0;
+		for(int i=0;i<terms.length;i++)
+		{
+			if(Arrays.asList(fileTerms).contains(terms[i].toLowerCase()))
+			{
+				commonTerms++;
+			}
+		}
+		return (commonTerms)/terms.length;
+	}
+		
 	public String[] getDocumentsByTerm(String term)
 	{
 		return invertedIndex.get(term).toArray(new String[invertedIndex.get(term).size()]);
