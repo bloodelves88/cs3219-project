@@ -341,18 +341,22 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				//String[] keywords = new String[keywordsTable.getRowCount()];
 				String[][] keywords = new String[keywordsTable.getRowCount()][2];
+				boolean isCustomWeights = false;
+				
 				for (int i = 0; i < keywordsTable.getRowCount(); i++) {
 					//keywords[i] = (String) keywordsTable.getModel().getValueAt(i, 0);
 					
 					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
 					if (customRankingCheckBox.isSelected() == true) {
 						keywords[i][1] = (String) keywordsTable.getModel().getValueAt(i, 1);
+						isCustomWeights = true;
 					} else {
 						keywords[i][1] = DEFAULT_KEYWORD_WEIGHT; // or whatever other default
+						isCustomWeights = false;
 					}
 					
 				}
-				String[][] results = GUIModel.search(keywords);
+				String[][] results = GUIModel.search(keywords, isCustomWeights);
 
 				filesOpenTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
