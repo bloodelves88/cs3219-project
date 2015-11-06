@@ -13,6 +13,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 public class ConvertForDisplay {
 	public String getPersonalParticulars(File file,TextRetrieval textretrieval,String path)
 	{
+		String temp="";
 		String name=getName(file);
 		ArrayList<String> list=textretrieval.getCVDetails(path);
 		String retrievedData="",results="";
@@ -31,7 +32,13 @@ public class ConvertForDisplay {
 		{
 			results=getName(file)+ System.getProperty("line.separator")+ getEmail(retrievedData) + System.getProperty("line.separator") + extractPhoneNumber(retrievedData);;
 		}
-
+		for(int i=0;i<list.size();i+=2)
+		{
+			if(list.get(i).equals("experience")||list.get(i).equals("employment"))
+			{
+				temp=getWorkExperience(list.get(i-1),list.get(i+1));
+			}
+		}
 	return results;
 	}
 	
@@ -106,5 +113,38 @@ public class ConvertForDisplay {
 	        result="Phone == " + existsPhone.next().number();
 	    }
 	    return result;
+	}
+	
+	private String getWorkExperience(String before,String actual )
+	{
+		String checker1="",checker2="";
+		
+		checker1=checker(before.split(";;"));
+		checker2=checker(actual.split(";;"));
+		//System.out.println(checker1);
+		//System.out.println(checker2);
+		
+		return null;
+	}
+	private String checker(String[] str)
+	{
+		//Pattern pattern1 = Pattern.compile("(.)*(\\d){4}(.)*");
+		Pattern pattern2 = Pattern.compile("(.)*(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|(nov|dec)(?:ember)?) (?:19[7-9]\\d|2\\d{3})(?=\\D|$)(.)*");
+		String parsed="";
+		for (int i=0;i<str.length;i++)
+		{
+			//Matcher matcher1 = pattern1.matcher(str[i]);
+			Matcher matcher2 = pattern2.matcher(str[i]);
+			//boolean isMatched1 = matcher1.matches();
+			boolean isMatched2 = matcher2.matches();
+			System.out.println(str[i]);
+			if(/*isMatched1&&*/isMatched2)
+			{
+				System.out.println("Parsing");
+				parsed=str[i];
+			}
+		}
+		
+		return null;
 	}
 }

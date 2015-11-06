@@ -248,7 +248,7 @@ public class GUI {
 		JScrollPane keywordsTableScrollPane = new JScrollPane(keywordsTable);
 		frmCvia.getContentPane().add(keywordsTableScrollPane, gbc_table);
 
-		DefaultTableModel keywordsTableModel = new DefaultTableModel();
+		final DefaultTableModel keywordsTableModel = new DefaultTableModel();
 		keywordsTable.setAutoCreateRowSorter(true);
 
 		keywordsTableModel.setColumnIdentifiers(new Object[] {"Keywords", "Weight"});
@@ -278,7 +278,7 @@ public class GUI {
 			}
 		});
 		
-		JComboBox<String> comboBox_weighting = new JComboBox<String>();
+		final JComboBox<String> comboBox_weighting = new JComboBox<String>();
 		comboBox_weighting.setModel(new DefaultComboBoxModel<String>(new String[] {"Default", "Simplified", "Custom Weights"}));
 		GridBagConstraints gbc_comboBox_weighting = new GridBagConstraints();
 		gbc_comboBox_weighting.insets = new Insets(0, 0, 5, 5);

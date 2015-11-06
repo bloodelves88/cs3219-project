@@ -201,6 +201,19 @@ public class TextRetrieval {
 		return (commonTerms)/(fileTerms.length+terms.length-commonTerms);
 	}
 	
+	private double BasicCalculation(String[] fileTerms,String[][]terms)
+	{
+		double commonTerms=0.0,weightedSum=0.0;
+		for(int i=0;i<terms.length;i++)
+		{
+			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
+			{
+				commonTerms++;
+			}
+		}
+		return commonTerms/terms.length;
+	}
+	
 	private double WeightedJaccardCoefficient(String[] fileTerms,String[][]terms)
 	{
 		double commonTerms=0.0,weightedSum=0.0;
@@ -227,7 +240,7 @@ public class TextRetrieval {
 	{
 		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
 	}
-	public String[][] getWeightedResults(String[][] terms,boolean customWeights)
+	public String[][] getWeightedResults(String[][] terms,int customWeights)
 	{
 		String[] results=new String[directIndex.size()];
 		double[] indexes=new double[directIndex.size()];
@@ -236,10 +249,14 @@ public class TextRetrieval {
 		double similarity=0;
 		for(String str:directIndex.keys())
 		{
-			if(customWeights)
+			if(customWeights==2)
 			{
 				similarity=WeightedJaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);				
-			}else{
+			}else if(customWeights==1)//basic
+			{
+				similarity=BasicCalculation(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+			}
+			else if(customWeights==0){
 				similarity=JaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
 			}
 			if (counter == 0){

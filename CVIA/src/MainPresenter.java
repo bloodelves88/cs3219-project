@@ -35,7 +35,7 @@ public class MainPresenter {
 		textRetrieval.AddPortions(fileportions, fileName);
 	}
 	
-	public static String[][] search(String[][] keywords, boolean customWeights)
+	public static String[][] search(String[][] keywords, int customWeights)
 	{
 		return textRetrieval.getWeightedResults(keywords,customWeights);
 			
