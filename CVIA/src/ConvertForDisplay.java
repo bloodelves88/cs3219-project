@@ -1,6 +1,8 @@
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -9,6 +11,9 @@ import java.util.regex.Pattern;
 
 import com.google.i18n.phonenumbers.PhoneNumberMatch;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
+
 
 public class ConvertForDisplay {
 	public String getPersonalParticulars(File file,TextRetrieval textretrieval,String path)
@@ -26,11 +31,11 @@ public class ConvertForDisplay {
 		if(retrievedData.contains("page1"))
 		{
 			//results="LinkedIn Profile : " + results.substring(results.lastIndexOf("page1")+5, results.length())+ System.getProperty("line.separator") +"Please contact through LinkedIn";
-			results="LinkedIn Profile : " + getName(file)+ System.getProperty("line.separator") +"Please contact through LinkedIn";
+			results="LinkedIn Profile : " + getName(file)+ System.getProperty("line.separator") +"Please contact through LinkedIn" + System.lineSeparator() + System.lineSeparator();
 		}
 		else
 		{
-			results=getName(file)+ System.getProperty("line.separator")+ getEmail(retrievedData) + System.getProperty("line.separator") + extractPhoneNumber(retrievedData);;
+			results=getName(file)+ System.getProperty("line.separator")+ getEmail(retrievedData) + System.getProperty("line.separator") + extractPhoneNumber(retrievedData) + System.lineSeparator() + System.lineSeparator();
 		}
 		for(int i=0;i<list.size();i+=2)
 		{
@@ -39,7 +44,7 @@ public class ConvertForDisplay {
 				temp=getWorkExperience(list.get(i-1),list.get(i+1));
 			}
 		}
-	return results;
+	return results+ temp;
 	}
 	
 	private String getName(File file)
@@ -118,33 +123,113 @@ public class ConvertForDisplay {
 	private String getWorkExperience(String before,String actual )
 	{
 		String checker1="",checker2="";
-		
+		//String text=checker("   senior software engineer (2006 - 2010), brewed concepts inc. and".split(";;"));
 		checker1=checker(before.split(";;"));
 		checker2=checker(actual.split(";;"));
 		//System.out.println(checker1);
 		//System.out.println(checker2);
 		
-		return null;
+		return checker1 + checker2;
 	}
 	private String checker(String[] str)
 	{
-		//Pattern pattern1 = Pattern.compile("(.)*(\\d){4}(.)*");
-		Pattern pattern2 = Pattern.compile("(.)*(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|(nov|dec)(?:ember)?) (?:19[7-9]\\d|2\\d{3})(?=\\D|$)(.)*");
+		//Pattern pattern1 = Pattern.compile("\\d{4}");
+		//Pattern pattern2 = Pattern.compile("(.)*(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|(nov|dec)(?:ember)?) (?:19[7-9]\\d|2\\d{3})(?=\\D|$)(.)*");
 		String parsed="";
+		int difference=0,totalWorkingExperience=0;
+		ArrayList<Date> datesretrieved=new ArrayList<Date>();
+		String[] yearsretrieved;
+		Parser parser = new Parser();
 		for (int i=0;i<str.length;i++)
 		{
+			difference=0;
+			datesretrieved.clear();
 			//Matcher matcher1 = pattern1.matcher(str[i]);
-			Matcher matcher2 = pattern2.matcher(str[i]);
+			//Matcher matcher2 = pattern2.matcher(str[i]);
 			//boolean isMatched1 = matcher1.matches();
-			boolean isMatched2 = matcher2.matches();
+			//boolean isMatched2 = matcher2.matches();
 			System.out.println(str[i]);
-			if(/*isMatched1&&*/isMatched2)
+			//if(/*isMatched1&&*/isMatched2)
+			//{
+				List<DateGroup> groups = parser.parse(str[i]);
+				for(DateGroup group:groups) {
+					List<Date> dates = group.getDates();
+					//System.out.println(dates.getClass().getName());
+					for(int j=0;j<dates.size();j++)
+					{
+						if(SingleDateDifference(dates.get(j))!=0)
+						{	
+							//System.out.println("Storing");							
+							//System.out.println(dates.get(j));
+							datesretrieved.add(dates.get(j));
+						}
+					}
+				}
+				if(datesretrieved.size()==1&&str[i].contains("present"))
+				{
+					//System.out.println("Inside case 1");
+					difference=SingleDateDifference(datesretrieved.get(0));					
+				}else if(datesretrieved.size()>1)
+				{
+					//System.out.println("Inside case 2");
+					//System.out.println(datesretrieved.get(1));
+					//System.out.println(datesretrieved.get(0));
+					difference=DoubleDateDifference(datesretrieved.get(0),datesretrieved.get(1));
+				}else{
+					String number=str[i].replaceAll("[\\D]", " ");
+					number=number.trim();
+					number=number.replaceAll("\\s+", " ");
+					yearsretrieved=yearChecker(number.split(" "));
+					if((yearsretrieved.length==2)&&(Integer.parseInt(yearsretrieved[1])>Integer.parseInt(yearsretrieved[0])))
+					{
+						difference=(Integer.parseInt(yearsretrieved[1])-Integer.parseInt(yearsretrieved[0]))*12;
+					}else if((yearsretrieved.length==1)&&str[i].contains("present")){
+						difference=(2015-Integer.parseInt(yearsretrieved[0]))*12;						
+					}
+				}
+				System.out.print("Difference is ");
+				System.out.println(difference);
+				if(difference!=0)
+				{
+					parsed+="Worked for "+ (difference/12) +" years and " + (difference%12) + " months as a" + str[i] + System.lineSeparator();
+					totalWorkingExperience+=difference;
+				}
+			}
+		//}
+		return "Worked for a total number of "+ (totalWorkingExperience/12) +" years and " + (totalWorkingExperience%12) + " months" + System.lineSeparator() +parsed;
+	}
+	
+	private int SingleDateDifference(Date date)
+	{
+	    Calendar current = Calendar.getInstance();
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+		return ((current.get(current.YEAR)*12+current.get(current.MONTH)+1)-(cal.get(Calendar.YEAR)*12+cal.get(Calendar.MONTH)+1));
+	}
+	
+	private int DoubleDateDifference(Date date1,Date date2)
+	{
+	    Calendar older = Calendar.getInstance();
+	    older.setTime(date1);
+	    Calendar newer = Calendar.getInstance();
+	    newer.setTime(date2);
+	    if(date2.compareTo(date1)>0)
+	    {
+	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(older.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));
+	    }else{
+	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));	    }
+	    	
+	}
+	private String[] yearChecker(String[] data)
+	{
+		ArrayList<String> result=new ArrayList<String>();
+		for(int i=0;i<data.length;i++)
+		{
+			if(data[i].trim().length()==4)
 			{
-				System.out.println("Parsing");
-				parsed=str[i];
+				result.add(data[i].trim());
 			}
 		}
-		
-		return null;
+		return result.toArray(new String[result.size()]);
 	}
 }

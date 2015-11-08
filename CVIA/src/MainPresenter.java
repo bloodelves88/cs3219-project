@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class MainPresenter {
-	private static Parser parser= new Parser();
+	private static ParserClass parser= new ParserClass();
 	private static TextRetrieval textRetrieval=new TextRetrieval();
 	private static Stemmer stemmer=new Stemmer();
 	private static ConvertForDisplay convertForDisplay = new ConvertForDisplay();

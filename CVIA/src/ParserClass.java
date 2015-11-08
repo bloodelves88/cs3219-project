@@ -16,7 +16,7 @@ import java.nio.file.Files;
 
 import javax.activation.MimetypesFileTypeMap;
 
-public class Parser {
+public class ParserClass {
 
 		NonSequentialPDFParser parser;
 		String parsedText;
@@ -26,7 +26,7 @@ public class Parser {
 		PDDocumentInformation pdDocInfo;
 		
 		// PDFTextParser Constructor 
-		public Parser() {
+		public ParserClass() {
 		}
 		
 		// Extract text from PDF Document
