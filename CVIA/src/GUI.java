@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -19,14 +18,11 @@ import javax.swing.JButton;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -44,7 +40,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.JCheckBox;
 import javax.swing.DefaultComboBoxModel;
 
 public class GUI {
