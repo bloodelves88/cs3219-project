@@ -307,7 +307,7 @@ public class GUI {
 		frmCvia.getContentPane().add(comboBox_weighting, gbc_comboBox_weighting);
 		comboBox_weighting.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				openJobKeywords(keywordsTable, selectedJob);
+				openJobKeywords(keywordsTable, selectedJob); // TODO: decide if this is needed
 				if (comboBox_weighting.getSelectedIndex() == 2) {
 					((DefaultTableModel) keywordsTable.getModel()).addColumn(null);
 					while(keywordsTable.getColumnCount() > 3) {
@@ -404,7 +404,7 @@ public class GUI {
 				keywordsTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
-					keywordsTableModel.addRow(new Object[]{"Keyword", "Yes/No", 1});
+					keywordsTableModel.addRow(new Object[]{"Keyword", "Yes/No", Integer.parseInt(DEFAULT_KEYWORD_WEIGHT)});
 				}
 				*/
 			}
