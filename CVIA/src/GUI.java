@@ -233,6 +233,8 @@ public class GUI {
 				switch (column) {
 				case 0:
 					return String.class;
+				case 1:
+					return String.class;
 				default:
 					return Integer.class;
 				}
@@ -247,14 +249,30 @@ public class GUI {
 		JScrollPane keywordsTableScrollPane = new JScrollPane(keywordsTable);
 		frmCvia.getContentPane().add(keywordsTableScrollPane, gbc_table);
 
-		final DefaultTableModel keywordsTableModel = new DefaultTableModel();
+		final DefaultTableModel keywordsTableModel = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int col) {
+			     switch (col) {
+			         case 0:
+			        	 return true;
+			         case 1:
+			             return false;
+			         case 2:
+			        	 return true;
+			         default:
+			             return true;
+			      }
+			}
+		};
 		keywordsTable.setAutoCreateRowSorter(true);
 
-		keywordsTableModel.setColumnIdentifiers(new Object[] {"Keywords", "Weight"});
+		keywordsTableModel.setColumnIdentifiers(new Object[] {"Keywords", "Match", "Weight"});
 		keywordsTable.setModel(keywordsTableModel);
 		keywordsTable.getColumnModel().getColumn(0).setMinWidth(400);
-		keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
-
+		keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+		keywordsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+		keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
+		
 		// Dropdown List
 		final JComboBox<String> comboBox_Job = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox_Job = new GridBagConstraints();
@@ -287,16 +305,19 @@ public class GUI {
 		frmCvia.getContentPane().add(comboBox_weighting, gbc_comboBox_weighting);
 		comboBox_weighting.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				openJobKeywords(keywordsTable, selectedJob);
 				if (comboBox_weighting.getSelectedIndex() == 2) {
 					((DefaultTableModel) keywordsTable.getModel()).addColumn(null);
-					while(keywordsTable.getColumnCount() > 2) {
-						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
+					while(keywordsTable.getColumnCount() > 3) {
+						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(3));
 					}
+					keywordsTable.getColumnModel().getColumn(2).setMaxWidth(100);
+					keywordsTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 					keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
 					keywordsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 				} else {
-					if (keywordsTable.getColumnCount() > 1) {
-						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(1));
+					if (keywordsTable.getColumnCount() > 2) {
+						keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
 					}
 				}
 			}
@@ -355,7 +376,7 @@ public class GUI {
 				for (int i = 0; i < keywordsTable.getRowCount(); i++) {					
 					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
 					if (selectedAnalyzingMethod == 2) {
-						keywords[i][1] = String.valueOf(keywordsTable.getModel().getValueAt(i, 1));
+						keywords[i][1] = String.valueOf(keywordsTable.getModel().getValueAt(i, 2));
 						//isCustomWeights = true;
 					} else {
 						keywords[i][1] = DEFAULT_KEYWORD_WEIGHT; // or whatever other default
@@ -370,6 +391,14 @@ public class GUI {
 					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
 					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
+				
+				/*
+				keywordsTableModel.setRowCount(0);
+				for (int i = 0; i < results.length; i++) {
+					System.out.println(results[i][1]);
+					keywordsTableModel.addRow(new Object[]{"Keyword", "Yes/No", 1});
+				}
+				*/
 			}
 		});
 
@@ -594,7 +623,7 @@ public class GUI {
 					String keywords[] = allKeywords.split("\\r?\\n");
 					for (int k = 0; k < keywords.length; k++) {
 						String keywordWeightPair[] = keywords[k].split("~");
-						((DefaultTableModel) keywordsTable.getModel()).addRow(new Object[]{keywordWeightPair[0], keywordWeightPair[1]});
+						((DefaultTableModel) keywordsTable.getModel()).addRow(new Object[]{keywordWeightPair[0], "No" ,keywordWeightPair[1]});
 					}
 				} catch (IOException e1) {
 					System.out.println("An exception occured in opening the keywords. ");
