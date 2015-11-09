@@ -7,8 +7,9 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Category {
-	List<String> subheadings=new ArrayList<String>(Arrays.asList("summary","qualification","skill","expertise","technical","education"
+	List<String> subheadings=new ArrayList<String>(Arrays.asList("summary","qualification","skill","expertise","technical","education","volunteer experience"
 			,"work experience","experience","education","extracurricular","curricular","interests","employment","reference","publication","work-related"));
+	String specialSubheading="projects";
 	public ArrayList<String> SplitFile(String path)
 	{
 		ArrayList<String> portions=new ArrayList<String>();
@@ -28,7 +29,11 @@ public class Category {
 				StringTokenizer st=new StringTokenizer(tags);
 				for(int i=0;i<subheadings.size();i++)
 				{
-					if(tags.contains(subheadings.get(i))&&(st.countTokens()<5))
+					if(tags.contains(specialSubheading)&&(st.countTokens()==1)){
+						portions.add(store);
+						portions.add(tags);						
+					}
+					else if(tags.contains(subheadings.get(i))&&(st.countTokens()<5))
 					{
 						portions.add(store);
 						portions.add(tags);

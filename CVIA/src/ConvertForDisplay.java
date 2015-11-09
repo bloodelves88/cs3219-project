@@ -23,6 +23,7 @@ public class ConvertForDisplay {
 		int totalWorkingExperience=0;
 		ArrayList<String> list=textretrieval.getCVDetails(path);
 		String retrievedData="",results="";
+		boolean isLinkedIn =false;
 		
 		retrievedData=list.get(1);
 		retrievedData=retrievedData.replaceAll(" +", " ");
@@ -31,6 +32,7 @@ public class ConvertForDisplay {
 
 		if(retrievedData.contains("page1"))
 		{
+			isLinkedIn=true;
 			//results="LinkedIn Profile : " + results.substring(results.lastIndexOf("page1")+5, results.length())+ System.getProperty("line.separator") +"Please contact through LinkedIn";
 			results="LinkedIn Profile : " + getName(file)+ System.getProperty("line.separator") +"Please contact through LinkedIn" + System.lineSeparator() + System.lineSeparator();
 		}
@@ -40,9 +42,9 @@ public class ConvertForDisplay {
 		}
 		for(int i=0;i<list.size();i+=2)
 		{
-			if(list.get(i).contains("experience")||list.get(i).contains("employment")||list.get(i).contains("work-related"))
+			if((list.get(i).contains("experience")&&!(list.get(i).contains("volunteer experience")))||list.get(i).contains("employment")||list.get(i).contains("work-related"))
 			{
-				temp=getWorkExperience(list.get(i+1));
+				temp=getWorkExperience(list.get(i+1),isLinkedIn);
 				totalWorkingExperience+=Integer.parseInt(temp[0]);
 				experiences+=temp[1];
 			}
@@ -124,37 +126,36 @@ public class ConvertForDisplay {
 	    return result;
 	}
 	
-	private String[] getWorkExperience(String actual )
+	private String[] getWorkExperience(String actual,boolean isLinkedIn )
 	{
 		String[] checker;
 		//String workexperience="";
 		//String text=checker("   senior software engineer (2006 - 2010), brewed concepts inc. and".split(";;"));
 		//checker1=checker(before.split(";;"));
-		checker=checker(actual.split(";;"));
+		checker=checker(actual.split(";;"),isLinkedIn);
 		//int totalWorkingExperience=Integer.parseInt(checker1[0])+Integer.parseInt(checker2[0]);
 		//System.out.println(checker1);
 		//System.out.println(checker2);
 		//workexperience="Worked for a total number of "+ (totalWorkingExperience/12) +" years and " + (totalWorkingExperience%12) + " months" + System.lineSeparator() + checker1[1] + checker2[1];
 		return checker;
 	}
-	private String[] checker(String[] str)
+	private String[] checker(String[] str,boolean isLinkedIn)
 	{
 		//Pattern pattern1 = Pattern.compile("\\d{4}");
-		//Pattern pattern2 = Pattern.compile("(.)*(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|(nov|dec)(?:ember)?) (?:19[7-9]\\d|2\\d{3})(?=\\D|$)(.)*");
+		Pattern pattern2 = Pattern.compile("(.)*(?:jan(?:uary)? |feb(?:ruary)? |mar(?:ch)? |apr(?:il)? |may |jun(?:e)? |jul(?:y)? |aug(?:ust)? |sep(?:tember)? |oct(?:ober)? |(nov|dec)(?:ember)? )(.)*");
 		String[] parsed=new String[]{"",""};
 		String copied="";
 		int difference=0,totalWorkingExperience=0;
 		ArrayList<Date> datesretrieved=new ArrayList<Date>();
 		String[] yearsretrieved;
 		Parser parser = new Parser();
+		Date date=new Date();
 		for (int i=0;i<str.length;i++)
 		{
 			difference=0;
 			datesretrieved.clear();
 			//Matcher matcher1 = pattern1.matcher(str[i]);
-			//Matcher matcher2 = pattern2.matcher(str[i]);
 			//boolean isMatched1 = matcher1.matches();
-			//boolean isMatched2 = matcher2.matches();
 			System.out.println(str[i]);
 			//Somehow the word "summer" causes the parser used by the library in checker function to fail. Hence need to remove
 			copied=str[i].replace("summer", "");
@@ -170,11 +171,16 @@ public class ConvertForDisplay {
 						{	
 							//System.out.println("Storing");							
 							//System.out.println(dates.get(j));
-							datesretrieved.add(dates.get(j));
+							if(dates.get(j).compareTo(date)<0)
+							{
+								datesretrieved.add(dates.get(j));
+							}
 						}
 					}
 				}
-				if(datesretrieved.size()==1&&(str[i].contains("present")||str[i].contains("current")))
+				Matcher matcher2 = pattern2.matcher(str[i]);
+				boolean isMatched2 = matcher2.matches();
+				if(datesretrieved.size()==1&&(str[i].contains("present")||str[i].contains("current"))&&isMatched2)
 				{
 					//System.out.println("Inside case 1");
 					difference=SingleDateDifference(datesretrieved.get(0));					
@@ -205,7 +211,13 @@ public class ConvertForDisplay {
 				System.out.println(difference);
 				if(difference>0)
 				{
-					parsed[1]+="Worked for "+ (difference/12) +" years and " + (difference%12) + " months : " + str[i].trim() + System.lineSeparator();
+					if(isLinkedIn)
+					{
+						parsed[1]+="Worked for "+ (difference/12) +" years and " + (difference%12) + " months : " + str[i-1].trim() +" " + str[i].trim() + System.lineSeparator();
+					}
+					else{
+						parsed[1]+="Worked for "+ (difference/12) +" years and " + (difference%12) + " months : " + str[i].trim() + System.lineSeparator();						
+					}
 					totalWorkingExperience+=difference;
 				}
 			}
@@ -224,15 +236,16 @@ public class ConvertForDisplay {
 	
 	private int DoubleDateDifference(Date date1,Date date2)
 	{
-	    Calendar older = Calendar.getInstance();
+	    Calendar current = Calendar.getInstance();
+		Calendar older = Calendar.getInstance();
 	    older.setTime(date1);
 	    Calendar newer = Calendar.getInstance();
 	    newer.setTime(date2);
 	    if(date2.compareTo(date1)>0)
 	    {
-	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(older.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));
+	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(older.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1))+1;
 	    }else if(date1.compareTo(date2)>0){
-	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));	    
+	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1))+1;	    
 	    }else{
 	    	return 0;
 	    }
