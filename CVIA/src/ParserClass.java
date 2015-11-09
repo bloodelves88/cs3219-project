@@ -1,20 +1,14 @@
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import org.apache.tika.*;
-import org.apache.tika.exception.TikaException;
 import org.apache.pdfbox.cos.*;
 import org.apache.pdfbox.pdfparser.*;
-import org.apache.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-
-import javax.activation.MimetypesFileTypeMap;
 
 public class ParserClass {
 
