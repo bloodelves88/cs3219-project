@@ -267,10 +267,11 @@ public class GUI {
 		};
 		keywordsTable.setAutoCreateRowSorter(true);
 
-		keywordsTableModel.setColumnIdentifiers(new Object[] {"Keywords", "Match", "Weight"});
+		keywordsTableModel.setColumnIdentifiers(new Object[] {"Keywords", "Selected CV Contains Keyword?", "Weight"});
 		keywordsTable.setModel(keywordsTableModel);
 		keywordsTable.getColumnModel().getColumn(0).setMinWidth(400);
-		keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+		keywordsTable.getColumnModel().getColumn(1).setMaxWidth(200);
+		keywordsTable.getColumnModel().getColumn(1).setMinWidth(200);
 		keywordsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 		keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
 		
@@ -314,7 +315,8 @@ public class GUI {
 					}
 					keywordsTable.getColumnModel().getColumn(2).setMaxWidth(100);
 					keywordsTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-					keywordsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+					keywordsTable.getColumnModel().getColumn(1).setMaxWidth(200);
+					keywordsTable.getColumnModel().getColumn(1).setMinWidth(200);
 					keywordsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 				} else {
 					if (keywordsTable.getColumnCount() > 2) {
