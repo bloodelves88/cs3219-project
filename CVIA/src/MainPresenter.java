@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class MainPresenter {
 	private static ParserClass parser= new ParserClass();
 	private static TextRetrieval textRetrieval=new TextRetrieval();
-	private static Stemmer stemmer=new Stemmer();
+	private static WordGenerator stemmer=new WordGenerator();
 	private static ConvertForDisplay convertForDisplay = new ConvertForDisplay();
 	
 	/**
