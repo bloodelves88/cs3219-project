@@ -53,6 +53,7 @@ public class GUI {
 	private String[] jobList;
 	private String jobListString;
 	private String selectedJob = "";
+	private String theOutString;
 	private JTextField txtEnterNewJob;
 	private JTable keywordsTable;
 	/**
@@ -319,9 +320,14 @@ public class GUI {
 				String[] descriptions = {".doc, .docx, .pdf, .txt"};
 				c.addChoosableFileFilter(new OpenFileFilter(extensions, descriptions));
 				c.setMultiSelectionEnabled(true); // returns a array of File objects
+				if (theOutString != null) {
+					c.setCurrentDirectory(new File(theOutString)); 
+		        }
+		        
 				int rVal = c.showOpenDialog(null);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
+					theOutString = files[0].getPath();
 					originalFiles = c.getSelectedFiles();
 					MainPresenter.ClearData();
 					resultIndex=new int[files.length];
