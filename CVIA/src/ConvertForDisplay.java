@@ -18,8 +18,10 @@ import com.joestelmach.natty.Parser;
 public class ConvertForDisplay {
 	public String getPersonalParticulars(File file,TextRetrieval textretrieval,String path)
 	{
-		String temp="";
+		String[] temp;
+		String workexperience="",experiences="";
 		String name=getName(file);
+		int totalWorkingExperience=0;
 		ArrayList<String> list=textretrieval.getCVDetails(path);
 		String retrievedData="",results="";
 		
@@ -39,12 +41,15 @@ public class ConvertForDisplay {
 		}
 		for(int i=0;i<list.size();i+=2)
 		{
-			if(list.get(i).equals("experience")||list.get(i).equals("employment"))
+			if(list.get(i).contains("experience")||list.get(i).contains("employment")||list.get(i).contains("work-related"))
 			{
-				temp=getWorkExperience(list.get(i-1),list.get(i+1));
+				temp=getWorkExperience(list.get(i+1));
+				totalWorkingExperience+=Integer.parseInt(temp[0]);
+				experiences+=temp[1];
 			}
 		}
-	return results+ temp;
+		workexperience="Worked for a total number of "+ (totalWorkingExperience/12) +" years and " + (totalWorkingExperience%12) + " months" + System.lineSeparator() + experiences;
+	return results+ workexperience;
 	}
 	
 	private String getName(File file)
@@ -120,22 +125,25 @@ public class ConvertForDisplay {
 	    return result;
 	}
 	
-	private String getWorkExperience(String before,String actual )
+	private String[] getWorkExperience(String actual )
 	{
-		String checker1="",checker2="";
+		String[] checker;
+		//String workexperience="";
 		//String text=checker("   senior software engineer (2006 - 2010), brewed concepts inc. and".split(";;"));
-		checker1=checker(before.split(";;"));
-		checker2=checker(actual.split(";;"));
+		//checker1=checker(before.split(";;"));
+		checker=checker(actual.split(";;"));
+		//int totalWorkingExperience=Integer.parseInt(checker1[0])+Integer.parseInt(checker2[0]);
 		//System.out.println(checker1);
 		//System.out.println(checker2);
-		
-		return checker1 + checker2;
+		//workexperience="Worked for a total number of "+ (totalWorkingExperience/12) +" years and " + (totalWorkingExperience%12) + " months" + System.lineSeparator() + checker1[1] + checker2[1];
+		return checker;
 	}
-	private String checker(String[] str)
+	private String[] checker(String[] str)
 	{
 		//Pattern pattern1 = Pattern.compile("\\d{4}");
 		//Pattern pattern2 = Pattern.compile("(.)*(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|(nov|dec)(?:ember)?) (?:19[7-9]\\d|2\\d{3})(?=\\D|$)(.)*");
-		String parsed="";
+		String[] parsed=new String[]{"",""};
+		String copied="";
 		int difference=0,totalWorkingExperience=0;
 		ArrayList<Date> datesretrieved=new ArrayList<Date>();
 		String[] yearsretrieved;
@@ -149,9 +157,11 @@ public class ConvertForDisplay {
 			//boolean isMatched1 = matcher1.matches();
 			//boolean isMatched2 = matcher2.matches();
 			System.out.println(str[i]);
+			//Somehow the word "summer" causes the parser used by the library in checker function to fail. Hence need to remove
+			copied=str[i].replace("summer", "");
 			//if(/*isMatched1&&*/isMatched2)
 			//{
-				List<DateGroup> groups = parser.parse(str[i]);
+				List<DateGroup> groups = parser.parse(copied);
 				for(DateGroup group:groups) {
 					List<Date> dates = group.getDates();
 					//System.out.println(dates.getClass().getName());
@@ -165,7 +175,7 @@ public class ConvertForDisplay {
 						}
 					}
 				}
-				if(datesretrieved.size()==1&&str[i].contains("present"))
+				if(datesretrieved.size()==1&&(str[i].contains("present")||str[i].contains("current")))
 				{
 					//System.out.println("Inside case 1");
 					difference=SingleDateDifference(datesretrieved.get(0));					
@@ -173,8 +183,13 @@ public class ConvertForDisplay {
 				{
 					//System.out.println("Inside case 2");
 					//System.out.println(datesretrieved.get(1));
-					//System.out.println(datesretrieved.get(0));
-					difference=DoubleDateDifference(datesretrieved.get(0),datesretrieved.get(1));
+					//System.out.println(datesretrieved.get(0));	
+					if(str[i].contains("present")||str[i].contains("current"))
+					{
+						difference=SingleDateDifference(datesretrieved.get(datesretrieved.size()-1));							
+					}else{
+						difference=DoubleDateDifference(datesretrieved.get(0),datesretrieved.get(1));
+					}
 				}else{
 					String number=str[i].replaceAll("[\\D]", " ");
 					number=number.trim();
@@ -183,20 +198,21 @@ public class ConvertForDisplay {
 					if((yearsretrieved.length==2)&&(Integer.parseInt(yearsretrieved[1])>Integer.parseInt(yearsretrieved[0])))
 					{
 						difference=(Integer.parseInt(yearsretrieved[1])-Integer.parseInt(yearsretrieved[0]))*12;
-					}else if((yearsretrieved.length==1)&&str[i].contains("present")){
+					}else if((yearsretrieved.length==1)&&(str[i].contains("present")||str[i].contains("current"))){
 						difference=(2015-Integer.parseInt(yearsretrieved[0]))*12;						
 					}
 				}
 				System.out.print("Difference is ");
 				System.out.println(difference);
-				if(difference!=0)
+				if(difference>0)
 				{
-					parsed+="Worked for "+ (difference/12) +" years and " + (difference%12) + " months as a" + str[i] + System.lineSeparator();
+					parsed[1]+="Worked for "+ (difference/12) +" years and " + (difference%12) + " months : " + str[i].trim() + System.lineSeparator();
 					totalWorkingExperience+=difference;
 				}
 			}
 		//}
-		return "Worked for a total number of "+ (totalWorkingExperience/12) +" years and " + (totalWorkingExperience%12) + " months" + System.lineSeparator() +parsed;
+		parsed[0]=Integer.toString(totalWorkingExperience);
+		return parsed;
 	}
 	
 	private int SingleDateDifference(Date date)
@@ -216,8 +232,11 @@ public class ConvertForDisplay {
 	    if(date2.compareTo(date1)>0)
 	    {
 	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(older.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));
+	    }else if(date1.compareTo(date2)>0){
+	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));	    
 	    }else{
-	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1));	    }
+	    	return 0;
+	    }
 	    	
 	}
 	private String[] yearChecker(String[] data)

@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 public class Category {
 	List<String> subheadings=new ArrayList<String>(Arrays.asList("summary","qualification","skill","expertise","technical","education"
-			,"work experience","experience","education","extracurricular","curricular","interests","employment","reference","publication","projects","work-related"));
+			,"work experience","experience","education","extracurricular","curricular","interests","employment","reference","publication","work-related"));
 	public ArrayList<String> SplitFile(String path)
 	{
 		ArrayList<String> portions=new ArrayList<String>();
@@ -25,7 +25,7 @@ public class Category {
 			Scanner txtFile=new Scanner(fr);
 			while(txtFile.hasNextLine())
 			{
-				tags=txtFile.nextLine().toLowerCase();
+				tags=txtFile.nextLine().toLowerCase().trim();
 				tags=tags.replaceAll("\t", "   ");
 				StringTokenizer st=new StringTokenizer(tags);
 				for(int i=0;i<subheadings.size();i++)
