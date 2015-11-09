@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.tartarus.snowball.ext.englishStemmer;
 
-public class Stemmer {
+public class WordGenerator {
 	private static List<String> phraseList = new ArrayList<String>();
 	
-	public Stemmer() {
+	public WordGenerator() {
 	}
     
     public String[] processFile(String fileName) {
