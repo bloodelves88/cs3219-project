@@ -25,8 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+
 import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
@@ -531,7 +535,45 @@ public class GUI {
 		}
 	}
 
+	private void updatePhraseFile(String keywords) {
+		Set<String> phraseSet = new HashSet<String>();
+		
+		// Add the phrases inside the file to a set
+		try {
+			String initialPhrases = readFile(System.getProperty("user.dir")+"\\phrases.txt");
+			String phrases[] = initialPhrases.split("\\r?\\n");
+			for (int k = 0; k < phrases.length; k++) {
+				phraseSet.add(phrases[k]);
+			}
+		} catch (IOException e1) {
+			System.out.println("An exception occured in opening the phrase list. ");
+			e1.printStackTrace();
+		}
+		
+		// Add the modified keywords to the set
+		String keywordArr[] = keywords.split("\\r?\\n");
+		for (int i = 0; i < keywordArr.length; i++) {
+			String keyword = keywordArr[i];
+			keyword = keyword.substring(0, keyword.indexOf("~")).trim();
+			if (keyword.contains(" ")) {
+				phraseSet.add(keyword);	
+			}
+		}
+		
+		// Write the phrases inside the set to the file
+		String allPhrases = "";
+		List<String> phraseList = new ArrayList<String>();
+		phraseList.addAll(phraseSet);
+		
+		for (int i = 0; i < phraseList.size(); i++) {
+			allPhrases = allPhrases.concat(phraseList.get(i) + "\n");
+		}
+		
+		writeTextToFile(allPhrases, System.getProperty("user.dir")+"\\phrases.txt");
+	}
+
 	private void saveJobKeywords(String selectedJob, String keywords) {
+		updatePhraseFile(keywords);
 		for (int i = 0; i < jobList.length; i++) {
 			if (selectedJob.equals(jobList[i])) {
 				writeTextToFile(keywords, System.getProperty("user.dir")+"\\CViA\\" + jobList[i] + ".txt");
