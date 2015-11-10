@@ -459,7 +459,7 @@ public class GUI {
 				String saveFileList = "";
 				for (int i = 0; i < tableFilesOpen.getRowCount(); i++) {
 					if ((Boolean) tableFilesOpen.getModel().getValueAt(i, 2) == Boolean.TRUE) {
-						saveFileList = saveFileList.concat((String) tableFilesOpen.getModel().getValueAt(i, 0) + "\n");
+						saveFileList = saveFileList.concat(tableFilesOpen.getModel().getValueAt(i, 0) + "\n");
 					}
 				}
 				if (!saveFileList.isEmpty()) {
