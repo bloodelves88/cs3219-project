@@ -33,7 +33,6 @@ public class ConvertForDisplay {
 		if(retrievedData.contains("page1"))
 		{
 			isLinkedIn=true;
-			//results="LinkedIn Profile : " + results.substring(results.lastIndexOf("page1")+5, results.length())+ System.getProperty("line.separator") +"Please contact through LinkedIn";
 			results="LinkedIn Profile : " + getName(file)+ System.getProperty("line.separator") +"Please contact through LinkedIn" + System.lineSeparator() + System.lineSeparator();
 		}
 		else
@@ -146,7 +145,6 @@ public class ConvertForDisplay {
 		{
 			difference=0;
 			datesretrieved.clear();
-			//System.out.println(str[i]);
 			//Somehow the word "summer" causes the parser used by the library in checker function to fail. Hence need to remove
 			copied=str[i].replace("summer", "");
 			List<DateGroup> groups = parser.parse(copied);
@@ -205,10 +203,8 @@ public class ConvertForDisplay {
 				}
 				if(latestDate&&(str[i].contains("present")||str[i].contains("current"))){
 					firstDate=new Date();
-					//System.out.println("First date is present" + firstDate);
 				}else if(latestDate&&datesretrieved.size()!=0){
-					firstDate=datesretrieved.get(1);
-					//System.out.println("First date is " + firstDate);						
+					firstDate=datesretrieved.get(1);				
 				}
 				latestDate=false;
 				if(datesretrieved.size()==1)
@@ -227,9 +223,7 @@ public class ConvertForDisplay {
 				    	earliestMonth.set(secondEarliestMonth.get(secondEarliestMonth.YEAR), earliestMonth.get(earliestMonth.MONTH), earliestMonth.get(earliestMonth.DAY_OF_MONTH));
 				    	lastDate=earliestMonth.getTime();
 				    }
-					//System.out.println("Last date is " + lastDate);
 				}
-				//totalWorkingExperience+=difference;
 				totalWorkingExperience=DoubleDateDifference(lastDate,firstDate);
 			}
 		}
@@ -291,12 +285,11 @@ public class ConvertForDisplay {
 				monthyear.set(Integer.parseInt(years[i]),0 , 1);
 			}
 			Date date=monthyear.getTime();
-			System.out.println(date);
 			checker.add(date);
 		}
 		return checker;
 	}
-	//Can truncate this into another function
+
 	private int monthChecker(String str)
 	{
 		int index=0,month=0;

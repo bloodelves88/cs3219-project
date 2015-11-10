@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import org.apache.tika.*;
 import org.apache.pdfbox.cos.*;
@@ -26,7 +28,7 @@ public class ParserClass {
 		// Extract text from PDF Document
 		private String pdftoText(String fileName) {
 		   
-		System.out.println("Parsing text from PDF file " + fileName + "....");
+		//System.out.println("Parsing text from PDF file " + fileName + "....");
 		File f = new File(fileName);
 		
 		try {
@@ -68,7 +70,7 @@ public class ParserClass {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		} 
-			System.out.println("Done.");
+			//System.out.println("Done.");
 			return parsedText;
 		}
 		
@@ -87,6 +89,26 @@ public class ParserClass {
 			}
 		}
 		
+		private String texttoText(File fileName)
+		{
+			String everything="";
+			try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			    StringBuilder sb = new StringBuilder();
+			    String line = br.readLine();
+
+			    while (line != null) {
+			        sb.append(line);
+			        sb.append(System.lineSeparator());
+			        line = br.readLine();
+			    }
+			    everything = sb.toString();
+			}catch(Exception e)
+			{
+				System.out.println(e);
+			}
+			return everything;
+		}
+		
 		public void parseFile(File fileName,int fileNumber)
 		{
 			String fileType=fileName.toString().substring(fileName.toString().lastIndexOf(".")+1,fileName.toString().length());
@@ -96,12 +118,14 @@ public class ParserClass {
 			}else if(fileType.equals("pdf"))
 			{
 				writeTexttoFile(pdftoText(fileName.toString()),"pdfoutput" + fileNumber +".txt");				
+			}else if(fileType.equals("txt")){
+				writeTexttoFile(texttoText(fileName),"pdfoutput" + fileNumber +".txt");
 			}
 		}
 		// Write the parsed text from PDF to a file
 		private void writeTexttoFile(String pdfText, String fileName) {
 		  
-			System.out.println("\nWriting PDF text to output text file " + fileName + "....");
+			//System.out.println("\nWriting PDF text to output text file " + fileName + "....");
 			try {
 				PrintWriter pw = new PrintWriter(fileName);
 				pw.print(pdfText);
