@@ -57,6 +57,7 @@ public class GUI {
 	private JTextField txtEnterNewJob;
 	private JTable keywordsTable;
 	private boolean hasClickedAnalyze;
+	private int chosenJob;
 	/**
 	 * Launch the application.
 	 */
@@ -408,6 +409,7 @@ public class GUI {
 					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
 				hasClickedAnalyze = true;
+				chosenJob = comboBox_Job.getSelectedIndex();
 			}
 		});
 
@@ -428,15 +430,15 @@ public class GUI {
 					textAreaCVDetails.setText(CVDetails);
 					textAreaCVDetails.setCaretPosition(0);
 					CVTermDetails= MainPresenter.getMatchedAndUnmatchedTerms(resultIndex[rowIndex]);
-					
-					if(CVTermDetails != null && hasClickedAnalyze == true) {
+
+					if(CVTermDetails != null && hasClickedAnalyze == true && chosenJob == comboBox_Job.getSelectedIndex()) {
 						keywordsTableModel.setRowCount(0);
 						for (int i = 0; i < CVTermDetails.length; i++) {
 							System.out.println(CVTermDetails[i][1]);
 							keywordsTableModel.addRow(new Object[]{CVTermDetails[i][0], CVTermDetails[i][1], Integer.parseInt(DEFAULT_KEYWORD_WEIGHT)});
 						}
 					}
-					
+
 				} else {
 					JOptionPane.showMessageDialog(frmCvia, "You have not selected a CV. Please select a CV from the table above by clicking on its entry");
 				}

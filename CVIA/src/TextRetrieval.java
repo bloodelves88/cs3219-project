@@ -18,11 +18,11 @@ public class TextRetrieval {
 		try{
 			LoadTerms(path,invertedIndex);
 		}catch(IOException e1)
-    	{
-    		e1.printStackTrace();
-    	}
+		{
+			e1.printStackTrace();
+		}
 	}
-	
+
 	public void AddPortions(ArrayList<String> portions,String fileName)
 	{
 		ArrayList<String> parts=new ArrayList<String>();
@@ -68,24 +68,24 @@ public class TextRetrieval {
 		String currNumber,combined;
 		while(pointer<parts.size())
 		{   
-		  currNumber=parts.get(pointer);
-		  combined=parts.get(pointer+1);
-		  for(int i=0;i<parts.size();i+=2){          
-		    if(currNumber.equals(parts.get(i)) && i>pointer){
-		    	combined+=" "+ parts.get(i)+ " " +parts.get(i+1);
-		    	parts.remove(i);
-		    	parts.remove(i+1);
-		        break;
-		    }
-		  }   
-		  pointer+=2;
-		  results.add(currNumber);
-		  results.add(combined);
+			currNumber=parts.get(pointer);
+			combined=parts.get(pointer+1);
+			for(int i=0;i<parts.size();i+=2){          
+				if(currNumber.equals(parts.get(i)) && i>pointer){
+					combined+=" "+ parts.get(i)+ " " +parts.get(i+1);
+					parts.remove(i);
+					parts.remove(i+1);
+					break;
+				}
+			}   
+			pointer+=2;
+			results.add(currNumber);
+			results.add(combined);
 		}
 		return results;
 	}
-	
-	
+
+
 	public void DeleteData()
 	{
 		ArrayList<String> keys=new ArrayList<String>();
@@ -101,7 +101,7 @@ public class TextRetrieval {
 			}
 		}
 	}
-	
+
 	public void clearUnmatchedTerms()
 	{
 		ArrayList<String> keys=new ArrayList<String>();
@@ -117,7 +117,7 @@ public class TextRetrieval {
 			}
 		}
 	}
-	
+
 	//Adds the file to the directIndex
 	public void AddFile(String fileName, String[] fileTerms)
 	{		
@@ -140,7 +140,7 @@ public class TextRetrieval {
 			UpdateInvertedIndex(fileName,fileTerms);
 		}
 	}
-	
+
 	//Loads terms into given index
 	//Precondition: Text file given has terms separated by newline
 	//Postcondition: Index is loaded
@@ -150,7 +150,7 @@ public class TextRetrieval {
 		String tags="";
 		try{
 			Scanner txtFile = new Scanner(fr);
-		
+
 			while(txtFile.hasNextLine())
 			{
 				tags=txtFile.nextLine();
@@ -163,33 +163,33 @@ public class TextRetrieval {
 			txtFile.close();
 		}catch(FileNotFoundException e)
 		{
-			 e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-		
+
 	private void UpdateInvertedIndex(String fileName,String[] fileSet)
 	{
 		LinkedList<String> listofTerms= new LinkedList<String>();
 		for(int i=0;i<fileSet.length;i++)
+		{
+			if(!invertedIndex.contains(fileSet[i]))
 			{
-				if(!invertedIndex.contains(fileSet[i]))
-				{
-					listofTerms.add(fileName);
-					Set<String> imageSet = new HashSet<String>(listofTerms);
-					invertedIndex.put(fileSet[i], imageSet);
-				}
-				else
-				{
-					Set<String> retrievedImageSet=invertedIndex.get(fileSet[i]);
-					if(!retrievedImageSet.contains(fileName))
-					{
-						retrievedImageSet.add(fileName);
-						invertedIndex.delete(fileSet[i]);
-						invertedIndex.put(fileSet[i], retrievedImageSet);
-					}
-				}
-				listofTerms.clear();
+				listofTerms.add(fileName);
+				Set<String> imageSet = new HashSet<String>(listofTerms);
+				invertedIndex.put(fileSet[i], imageSet);
 			}
+			else
+			{
+				Set<String> retrievedImageSet=invertedIndex.get(fileSet[i]);
+				if(!retrievedImageSet.contains(fileName))
+				{
+					retrievedImageSet.add(fileName);
+					invertedIndex.delete(fileSet[i]);
+					invertedIndex.put(fileSet[i], retrievedImageSet);
+				}
+			}
+			listofTerms.clear();
+		}
 	}
 
 	private double JaccardCoefficient(String[] fileTerms,String[][]terms,String filename)
@@ -212,7 +212,7 @@ public class TextRetrieval {
 		fileAndTermsIndex.put(filename, arraylist);
 		return (commonTerms)/(fileTerms.length+terms.length-commonTerms);
 	}
-	
+
 	private double BasicCalculation(String[] fileTerms,String[][]terms,String filename)
 	{
 		double commonTerms=0.0;
@@ -233,7 +233,7 @@ public class TextRetrieval {
 		fileAndTermsIndex.put(filename, arraylist);
 		return commonTerms/terms.length;
 	}
-	
+
 	private double WeightedJaccardCoefficient(String[] fileTerms,String[][]terms,String filename)
 	{
 		double commonTerms=0.0,weightedSum=0.0;
@@ -258,29 +258,29 @@ public class TextRetrieval {
 		fileAndTermsIndex.put(filename, arraylist);
 		return (commonTerms)/(weightedSum-commonTerms+fileTerms.length);
 	}
-		
+
 	public String[][] getMatchedAndUnmatchedTerms(String filename)
 	{
 		ArrayList<String[]> termSet=fileAndTermsIndex.get(filename);
 		if(termSet!=null){
-		String[][] resultSet=new String[termSet.size()][2];
-		for(int i=0;i<termSet.size();i++)
-		{
-			resultSet[i][0]=termSet.get(i)[0];
-			resultSet[i][1]=termSet.get(i)[1];
-		}
-		return resultSet;
+			String[][] resultSet=new String[termSet.size()][2];
+			for(int i=0;i<termSet.size();i++)
+			{
+				resultSet[i][0]=termSet.get(i)[0];
+				resultSet[i][1]=termSet.get(i)[1];
+			}
+			return resultSet;
 		}else{
 			return null;
 		}
-		
+
 	}
-	
+
 	public String[] getDocumentsByTerm(String term)
 	{
 		return invertedIndex.get(term).toArray(new String[invertedIndex.get(term).size()]);
 	}
-	
+
 	public String[] getTermsByDocument(String term)
 	{
 		return directIndex.get(term).toArray(new String[directIndex.get(term).size()]);
@@ -334,7 +334,7 @@ public class TextRetrieval {
 		}
 		return combinedResult;
 	}
-	
+
 	public ArrayList<String> getCVDetails(String path)
 	{
 		ArrayList<String> list=fileIndex.get(path);

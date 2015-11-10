@@ -24,7 +24,7 @@ public class ConvertForDisplay {
 		ArrayList<String> list=textretrieval.getCVDetails(path);
 		String retrievedData="",results="";
 		boolean isLinkedIn =false;
-		
+
 		retrievedData=list.get(1);
 		retrievedData=retrievedData.replaceAll(" +", " ");
 		retrievedData=retrievedData.replaceAll(";;", System.lineSeparator());
@@ -49,46 +49,46 @@ public class ConvertForDisplay {
 			}
 		}
 		workexperience="Worked for a total number of "+ (totalWorkingExperience/12) +" years and " + (totalWorkingExperience%12) + " months" + System.lineSeparator() + experiences;
-	return results+ workexperience;
+		return results+ workexperience;
 	}
-	
+
 	private String getName(File file)
 	{
 		List<String> list;
 		String parsed = "";
-	   	String filename=file.toString().substring(file.toString().lastIndexOf("\\")+1, file.toString().lastIndexOf("."));
-	   	if(filename.contains("_"))
-	   	{
-	   		list=Arrays.asList(filename.split("_"));
-	   	}else{
-	   		list=Arrays.asList(filename.split(" "));	   		
-	   	}
-	   	for(int i=0;i<list.size();i++)
-	   	{
-	   		if(!(list.get(i).toLowerCase().contains("cv")||list.get(i).toLowerCase().contains("resume")))
-	   		{
-	   			parsed+=list.get(i).replaceAll(" ", "");
-	   		}
-	   	}
-	   	parsed=parsed.replaceAll("\\d", "");
-	   	parsed=parsed.replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2");
+		String filename=file.toString().substring(file.toString().lastIndexOf("\\")+1, file.toString().lastIndexOf("."));
+		if(filename.contains("_"))
+		{
+			list=Arrays.asList(filename.split("_"));
+		}else{
+			list=Arrays.asList(filename.split(" "));	   		
+		}
+		for(int i=0;i<list.size();i++)
+		{
+			if(!(list.get(i).toLowerCase().contains("cv")||list.get(i).toLowerCase().contains("resume")))
+			{
+				parsed+=list.get(i).replaceAll(" ", "");
+			}
+		}
+		parsed=parsed.replaceAll("\\d", "");
+		parsed=parsed.replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2");
 		return parsed;
 	}
-	
+
 	private String getEmail(String str)
 	{
 		String email="";
-	    Matcher m = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+").matcher(str);
-	    while (m.find()) {
-	        email=m.group();
-	    }
-	    if(email.contains(".com"))
-	    {
-	    	email=email.substring(0, email.indexOf(".com")+4);
-	    }
-	    return email;
+		Matcher m = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+").matcher(str);
+		while (m.find()) {
+			email=m.group();
+		}
+		if(email.contains(".com"))
+		{
+			email=email.substring(0, email.indexOf(".com")+4);
+		}
+		return email;
 	}
-	
+
 	public String extractPhoneNumber(String input){
 		String temp="",numbers="",result="";
 		List<String> list;
@@ -117,13 +117,13 @@ public class ConvertForDisplay {
 		{
 			numbers=numbers.substring(0, 13);
 		}
-	    Iterator<PhoneNumberMatch> existsPhone=PhoneNumberUtil.getInstance().findNumbers(numbers, "IN").iterator();
-	    while (existsPhone.hasNext()){
-	        result="Phone == " + existsPhone.next().number();
-	    }
-	    return result;
+		Iterator<PhoneNumberMatch> existsPhone=PhoneNumberUtil.getInstance().findNumbers(numbers, "IN").iterator();
+		while (existsPhone.hasNext()){
+			result="Phone == " + existsPhone.next().number();
+		}
+		return result;
 	}
-	
+
 	private String[] getWorkExperience(String actual,boolean isLinkedIn )
 	{
 		String[] checker;
@@ -187,7 +187,7 @@ public class ConvertForDisplay {
 				}else if((yearsretrieved.length==1)&&(str[i].contains("present")||str[i].contains("current"))){
 					datesretrieved=monthAndYearCheck(str[i],yearsretrieved);
 					Date date1=new Date();
-				    datesretrieved.add(0, date1);
+					datesretrieved.add(0, date1);
 					//difference=(2015-Integer.parseInt(yearsretrieved[0]))*12;	
 					difference=DoubleDateDifference(datesretrieved.get(0),datesretrieved.get(1));
 				}
@@ -214,15 +214,15 @@ public class ConvertForDisplay {
 				else if(datesretrieved.size()>1)
 				{
 					lastDate=datesretrieved.get(0);
-				    Calendar earliestMonth = Calendar.getInstance();
-				    earliestMonth.setTime(datesretrieved.get(0));
-				    Calendar secondEarliestMonth = Calendar.getInstance();
-				    secondEarliestMonth.setTime(datesretrieved.get(1));
-				    if(earliestMonth.get(earliestMonth.YEAR)==2015)
-				    {
-				    	earliestMonth.set(secondEarliestMonth.get(secondEarliestMonth.YEAR), earliestMonth.get(earliestMonth.MONTH), earliestMonth.get(earliestMonth.DAY_OF_MONTH));
-				    	lastDate=earliestMonth.getTime();
-				    }
+					Calendar earliestMonth = Calendar.getInstance();
+					earliestMonth.setTime(datesretrieved.get(0));
+					Calendar secondEarliestMonth = Calendar.getInstance();
+					secondEarliestMonth.setTime(datesretrieved.get(1));
+					if(earliestMonth.get(earliestMonth.YEAR)==2015)
+					{
+						earliestMonth.set(secondEarliestMonth.get(secondEarliestMonth.YEAR), earliestMonth.get(earliestMonth.MONTH), earliestMonth.get(earliestMonth.DAY_OF_MONTH));
+						lastDate=earliestMonth.getTime();
+					}
 				}
 				totalWorkingExperience=DoubleDateDifference(lastDate,firstDate);
 			}
@@ -230,30 +230,30 @@ public class ConvertForDisplay {
 		parsed[0]=Integer.toString(totalWorkingExperience);
 		return parsed;
 	}
-	
+
 	private int SingleDateDifference(Date date)
 	{
-	    Calendar current = Calendar.getInstance();
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(date);
+		Calendar current = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
 		return ((current.get(current.YEAR)*12+current.get(current.MONTH)+1)-(cal.get(Calendar.YEAR)*12+cal.get(Calendar.MONTH)+1));
 	}
-	
+
 	private int DoubleDateDifference(Date date1,Date date2)
 	{
 		Calendar older = Calendar.getInstance();
-	    older.setTime(date1);
-	    Calendar newer = Calendar.getInstance();
-	    newer.setTime(date2);
-	    if(date2.compareTo(date1)>0)
-	    {
-	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(older.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1))+1;
-	    }else if(date1.compareTo(date2)>0){
-	    	return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1))+1;	    
-	    }else{
-	    	return 0;
-	    }
-	    	
+		older.setTime(date1);
+		Calendar newer = Calendar.getInstance();
+		newer.setTime(date2);
+		if(date2.compareTo(date1)>0)
+		{
+			return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(older.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1))+1;
+		}else if(date1.compareTo(date2)>0){
+			return ((newer.get(newer.YEAR)*12+newer.get(newer.MONTH)+1)-(newer.get(Calendar.YEAR)*12+older.get(Calendar.MONTH)+1))+1;	    
+		}else{
+			return 0;
+		}
+
 	}
 	private String[] yearChecker(String[] data)
 	{
@@ -267,7 +267,7 @@ public class ConvertForDisplay {
 		}
 		return result.toArray(new String[result.size()]);
 	}
-	
+
 	private ArrayList<Date> monthAndYearCheck(String str,String[] years)
 	{
 		ArrayList<Date> checker=new ArrayList<Date>();
@@ -433,7 +433,7 @@ public class ConvertForDisplay {
 		}
 		return month;
 	}
-	
+
 	private boolean indexChecker(int index,int month){
 		return month>index;
 	}
