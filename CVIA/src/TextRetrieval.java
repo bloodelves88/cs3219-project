@@ -196,9 +196,9 @@ public class TextRetrieval {
 	{
 		double commonTerms=0.0;
 		ArrayList<String[]> arraylist=new ArrayList<String[]>();
-		String[] termAndappearance=new String[2];
 		for(int i=0;i<terms.length;i++)
 		{
+			String[] termAndappearance=new String[2];
 			termAndappearance[0]=terms[i][0];
 			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
 			{
@@ -207,8 +207,8 @@ public class TextRetrieval {
 			}else{
 				termAndappearance[1]="No";
 			}
-			System.out.println(termAndappearance[0]);
-			System.out.println(termAndappearance[1]);
+			//System.out.println(termAndappearance[0]);
+			//System.out.println(termAndappearance[1]);
 			arraylist.add(termAndappearance);
 		}
 		fileAndTermsIndex.put(filename, arraylist);
