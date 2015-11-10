@@ -56,6 +56,7 @@ public class GUI {
 	private String theOutString;
 	private JTextField txtEnterNewJob;
 	private JTable keywordsTable;
+	private boolean hasClickedAnalyze;
 	/**
 	 * Launch the application.
 	 */
@@ -119,7 +120,7 @@ public class GUI {
 		gbc_horizontalStrut_right.gridx = 6;
 		gbc_horizontalStrut_right.gridy = 7;
 		frmCvia.getContentPane().add(horizontalStrut_right, gbc_horizontalStrut_right);
-		
+
 		Component verticalStrut_bottom = Box.createVerticalStrut(3);
 		GridBagConstraints gbc_verticalStrut_bottom = new GridBagConstraints();
 		gbc_verticalStrut_bottom.insets = new Insets(0, 0, 0, 5);
@@ -156,7 +157,7 @@ public class GUI {
 		gbc_lblKeyWords.gridx = 1;
 		gbc_lblKeyWords.gridy = 6;
 		frmCvia.getContentPane().add(lblKeyWords, gbc_lblKeyWords);
-		
+
 		JLabel lblWeightingMethod = new JLabel("Weighting Method:");
 		GridBagConstraints gbc_lblWeightingMethod = new GridBagConstraints();
 		gbc_lblWeightingMethod.insets = new Insets(0, 0, 5, 5);
@@ -253,16 +254,16 @@ public class GUI {
 		final DefaultTableModel keywordsTableModel = new DefaultTableModel() {
 			@Override
 			public boolean isCellEditable(int row, int col) {
-			     switch (col) {
-			         case 0:
-			        	 return true;
-			         case 1:
-			             return false;
-			         case 2:
-			        	 return true;
-			         default:
-			             return true;
-			      }
+				switch (col) {
+				case 0:
+					return true;
+				case 1:
+					return false;
+				case 2:
+					return true;
+				default:
+					return true;
+				}
 			}
 		};
 		keywordsTable.setAutoCreateRowSorter(true);
@@ -274,7 +275,7 @@ public class GUI {
 		keywordsTable.getColumnModel().getColumn(1).setMinWidth(200);
 		keywordsTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 		keywordsTable.removeColumn(keywordsTable.getColumnModel().getColumn(2));
-		
+
 		// Dropdown List
 		final JComboBox<String> comboBox_Job = new JComboBox<String>();
 		GridBagConstraints gbc_comboBox_Job = new GridBagConstraints();
@@ -296,7 +297,7 @@ public class GUI {
 				openJobKeywords(keywordsTable, selectedJob);
 			}
 		});
-		
+
 		final JComboBox<String> comboBox_weighting = new JComboBox<String>();
 		comboBox_weighting.setModel(new DefaultComboBoxModel<String>(new String[] {"Default", "Simplified", "Custom Weights"}));
 		GridBagConstraints gbc_comboBox_weighting = new GridBagConstraints();
@@ -307,7 +308,7 @@ public class GUI {
 		frmCvia.getContentPane().add(comboBox_weighting, gbc_comboBox_weighting);
 		comboBox_weighting.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				openJobKeywords(keywordsTable, selectedJob); // TODO: decide if this is needed
+				openJobKeywords(keywordsTable, selectedJob);
 				if (comboBox_weighting.getSelectedIndex() == 2) {
 					((DefaultTableModel) keywordsTable.getModel()).addColumn(null);
 					while(keywordsTable.getColumnCount() > 3) {
@@ -346,8 +347,8 @@ public class GUI {
 				c.setMultiSelectionEnabled(true); // returns a array of File objects
 				if (theOutString != null) {
 					c.setCurrentDirectory(new File(theOutString)); 
-		        }
-		        
+				}
+
 				int rVal = c.showOpenDialog(null);
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
@@ -368,6 +369,8 @@ public class GUI {
 						MainPresenter.startProcessing(files[i].toString());
 						resultIndex[i]=i;
 					}
+					hasClickedAnalyze = false;
+					openJobKeywords(keywordsTable, selectedJob);
 				}
 			}
 		});
@@ -385,7 +388,7 @@ public class GUI {
 				String[][] keywords = new String[keywordsTable.getRowCount()][2];
 				//boolean isCustomWeights = false;
 				int selectedAnalyzingMethod = comboBox_weighting.getSelectedIndex();
-				
+
 				for (int i = 0; i < keywordsTable.getRowCount(); i++) {					
 					keywords[i][0] = (String) keywordsTable.getModel().getValueAt(i, 0);
 					if (selectedAnalyzingMethod == 2) {
@@ -404,14 +407,7 @@ public class GUI {
 					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
 					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
-				
-				/*
-				keywordsTableModel.setRowCount(0);
-				for (int i = 0; i < results.length; i++) {
-					System.out.println(results[i][1]);
-					keywordsTableModel.addRow(new Object[]{"Keyword", "Yes/No", Integer.parseInt(DEFAULT_KEYWORD_WEIGHT)});
-				}
-				*/
+				hasClickedAnalyze = true;
 			}
 		});
 
@@ -432,18 +428,20 @@ public class GUI {
 					textAreaCVDetails.setText(CVDetails);
 					textAreaCVDetails.setCaretPosition(0);
 					CVTermDetails= MainPresenter.getMatchedAndUnmatchedTerms(resultIndex[rowIndex]);
-					keywordsTableModel.setRowCount(0);
-					if(CVTermDetails!=null){
-					for (int i = 0; i < CVTermDetails.length; i++) {
-						System.out.println(CVTermDetails[i][1]);
-						keywordsTableModel.addRow(new Object[]{CVTermDetails[i][0], CVTermDetails[i][1], Integer.parseInt(DEFAULT_KEYWORD_WEIGHT)});
+					
+					if(CVTermDetails != null && hasClickedAnalyze == true) {
+						keywordsTableModel.setRowCount(0);
+						for (int i = 0; i < CVTermDetails.length; i++) {
+							System.out.println(CVTermDetails[i][1]);
+							keywordsTableModel.addRow(new Object[]{CVTermDetails[i][0], CVTermDetails[i][1], Integer.parseInt(DEFAULT_KEYWORD_WEIGHT)});
+						}
 					}
-					}
+					
 				} else {
 					JOptionPane.showMessageDialog(frmCvia, "You have not selected a CV. Please select a CV from the table above by clicking on its entry");
 				}
-				
-				
+
+
 			}
 		});
 
@@ -487,7 +485,7 @@ public class GUI {
 				}
 			}
 		});
-		
+
 		JButton btnAddKeyword = new JButton("Add Keyword");
 		GridBagConstraints gbc_btnAddKeyword = new GridBagConstraints();
 		gbc_btnAddKeyword.insets = new Insets(0, 0, 5, 5);
@@ -501,7 +499,7 @@ public class GUI {
 				keywordsTable.scrollRectToVisible(keywordsTable.getCellRect(keywordsTable.getRowCount()-1, 0, true));
 			}
 		});
-		
+
 		JButton btnDeleteKeyword = new JButton("Delete Keyword");
 		GridBagConstraints gbc_btnDeleteKeyword = new GridBagConstraints();
 		gbc_btnDeleteKeyword.insets = new Insets(0, 0, 5, 5);
@@ -518,7 +516,7 @@ public class GUI {
 				}
 			}
 		});
-		 
+
 		JButton buttonSaveResults = new JButton("Save Keywords");
 		GridBagConstraints gbc_buttonSaveResults = new GridBagConstraints();
 		gbc_buttonSaveResults.insets = new Insets(0, 0, 5, 5);
@@ -571,16 +569,16 @@ public class GUI {
 	}
 
 	public List<File> iterateFiles(File[] files, List<File> fileList) {
-	    for (File file : files) {
-	        if (file.isFile()) {
-	        	fileList.add(file);
-	        } else if (file.isDirectory()) {
-	            iterateFiles(file.listFiles(), fileList);
-	        }
-	    }
-	    return fileList;
+		for (File file : files) {
+			if (file.isFile()) {
+				fileList.add(file);
+			} else if (file.isDirectory()) {
+				iterateFiles(file.listFiles(), fileList);
+			}
+		}
+		return fileList;
 	}             
-	
+
 	private void writeTextToFile(String contents, String fileName) {
 		//contents = contents.replaceAll("(?!\\r)\\n", "\r\n");
 		try {
@@ -595,7 +593,7 @@ public class GUI {
 
 	private void updatePhraseFile(String keywords) {
 		Set<String> phraseSet = new HashSet<String>();
-		
+
 		// Add the phrases inside the file to a set
 		try {
 			String initialPhrases = readFile(System.getProperty("user.dir")+"\\phrases.txt");
@@ -607,7 +605,7 @@ public class GUI {
 			System.out.println("An exception occured in opening the phrase list. ");
 			e1.printStackTrace();
 		}
-		
+
 		// Add the modified keywords to the set
 		String keywordArr[] = keywords.split("\\r?\\n");
 		for (int i = 0; i < keywordArr.length; i++) {
@@ -617,16 +615,16 @@ public class GUI {
 				phraseSet.add(keyword);	
 			}
 		}
-		
+
 		// Write the phrases inside the set to the file
 		String allPhrases = "";
 		List<String> phraseList = new ArrayList<String>();
 		phraseList.addAll(phraseSet);
-		
+
 		for (int i = 0; i < phraseList.size(); i++) {
 			allPhrases = allPhrases.concat(phraseList.get(i) + "\n");
 		}
-		
+
 		writeTextToFile(allPhrases, System.getProperty("user.dir")+"\\phrases.txt");
 	}
 
@@ -657,7 +655,7 @@ public class GUI {
 					String keywords[] = allKeywords.split("\\r?\\n");
 					for (int k = 0; k < keywords.length; k++) {
 						String keywordWeightPair[] = keywords[k].split("~");
-						((DefaultTableModel) keywordsTable.getModel()).addRow(new Object[]{keywordWeightPair[0], "No" ,keywordWeightPair[1]});
+						((DefaultTableModel) keywordsTable.getModel()).addRow(new Object[]{keywordWeightPair[0], "Unknown" ,keywordWeightPair[1]});
 					}
 				} catch (IOException e1) {
 					System.out.println("An exception occured in opening the keywords. ");
