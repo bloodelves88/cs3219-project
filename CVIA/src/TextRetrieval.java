@@ -11,7 +11,7 @@ public class TextRetrieval {
 	private ST<String,Set<String>> directIndex = new ST<String,Set<String>>() ; 
 	private ST<String,Set<String>> invertedIndex = new ST<String,Set<String>>();
 	private ST<String,ArrayList<String>> fileIndex = new ST<String,ArrayList<String>>();
-	
+	private ST<String,ArrayList<String[]>> fileAndTermsIndex=new ST<String,ArrayList<String[]>>();
 	//Possible loading of stored terms
 	public void LoadTerms(String path)
 	{
@@ -59,7 +59,6 @@ public class TextRetrieval {
 			parts.add(categoryName);
 			parts.add(categoryDescription);
 		}
-		ArrayList<String>test=removeDuplicate(parts);
 		fileIndex.put(fileName, removeDuplicate(parts));
 	}
 	private ArrayList<String> removeDuplicate(ArrayList<String> parts)
@@ -101,7 +100,22 @@ public class TextRetrieval {
 				directIndex.delete(keys.get(i));
 			}
 		}
-		System.out.println(directIndex.size());
+	}
+	
+	public void clearUnmatchedTerms()
+	{
+		ArrayList<String> keys=new ArrayList<String>();
+		if(!fileAndTermsIndex.isEmpty())
+		{
+			for(String str:fileAndTermsIndex.keys())
+			{
+				keys.add(str);
+			}
+			for(int i=0;i<keys.size();i++)
+			{
+				fileAndTermsIndex.delete(keys.get(i));
+			}
+		}
 	}
 	
 	//Adds the file to the directIndex
@@ -178,49 +192,94 @@ public class TextRetrieval {
 			}
 	}
 
-	private double JaccardCoefficient(String[] fileTerms,String[][]terms)
+	private double JaccardCoefficient(String[] fileTerms,String[][]terms,String filename)
 	{
 		double commonTerms=0.0;
+		ArrayList<String[]> arraylist=new ArrayList<String[]>();
+		String[] termAndappearance=new String[2];
 		for(int i=0;i<terms.length;i++)
 		{
+			termAndappearance[0]=terms[i][0];
 			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
 			{
 				commonTerms++;
+				termAndappearance[1]="Yes";
+			}else{
+				termAndappearance[1]="No";
 			}
+			System.out.println(termAndappearance[0]);
+			System.out.println(termAndappearance[1]);
+			arraylist.add(termAndappearance);
 		}
+		fileAndTermsIndex.put(filename, arraylist);
 		return (commonTerms)/(fileTerms.length+terms.length-commonTerms);
 	}
 	
-	private double BasicCalculation(String[] fileTerms,String[][]terms)
+	private double BasicCalculation(String[] fileTerms,String[][]terms,String filename)
 	{
-		double commonTerms=0.0,weightedSum=0.0;
+		double commonTerms=0.0;
+		ArrayList<String[]> arraylist=new ArrayList<String[]>();
+		String[] termAndappearance=new String[2];
 		for(int i=0;i<terms.length;i++)
 		{
+			termAndappearance[0]=terms[i][0];
 			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
 			{
 				commonTerms++;
+				termAndappearance[1]="Yes";
+			}else{
+				termAndappearance[1]="No";
 			}
+			arraylist.add(termAndappearance);
 		}
+		fileAndTermsIndex.put(filename, arraylist);
 		return commonTerms/terms.length;
 	}
 	
-	private double WeightedJaccardCoefficient(String[] fileTerms,String[][]terms)
+	private double WeightedJaccardCoefficient(String[] fileTerms,String[][]terms,String filename)
 	{
 		double commonTerms=0.0,weightedSum=0.0;
+		ArrayList<String[]> arraylist=new ArrayList<String[]>();
+		String[] termAndappearance=new String[2];
 		for(int i=0;i<terms.length;i++)
 		{
+			termAndappearance[0]=terms[i][0];
 			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
 			{
 				commonTerms+=Integer.parseInt(terms[i][1]);
+				termAndappearance[1]="Yes";
+			}else{
+				termAndappearance[1]="No";
 			}
+			System.out.println(termAndappearance[0]);
+			System.out.println(termAndappearance[1]);
+			arraylist.add(termAndappearance);
 		}
 		for(int i=0;i<terms.length;i++)
 		{
 			weightedSum+=Integer.parseInt(terms[i][1]);
 		}
+		fileAndTermsIndex.put(filename, arraylist);
 		return (commonTerms)/(weightedSum-commonTerms+fileTerms.length);
 	}
 		
+	public String[][] getMatchedAndUnmatchedTerms(String filename)
+	{
+		ArrayList<String[]> termSet=fileAndTermsIndex.get(filename);
+		if(termSet!=null){
+		String[][] resultSet=new String[termSet.size()][2];
+		for(int i=0;i<termSet.size();i++)
+		{
+			resultSet[i][0]=termSet.get(i)[0];
+			resultSet[i][1]=termSet.get(i)[1];
+		}
+		return resultSet;
+		}else{
+			return null;
+		}
+		
+	}
+	
 	public String[] getDocumentsByTerm(String term)
 	{
 		return invertedIndex.get(term).toArray(new String[invertedIndex.get(term).size()]);
@@ -237,17 +296,18 @@ public class TextRetrieval {
 		String[][] combinedResult=new String[directIndex.size()][2];
 		int counter=0;
 		double similarity=0;
+		clearUnmatchedTerms();
 		for(String str:directIndex.keys())
 		{
 			if(customWeights==2)
 			{
-				similarity=WeightedJaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);				
+				similarity=WeightedJaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms,str);				
 			}else if(customWeights==1)//basic
 			{
-				similarity=BasicCalculation(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+				similarity=BasicCalculation(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms,str);
 			}
 			else if(customWeights==0){
-				similarity=JaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms);
+				similarity=JaccardCoefficient(directIndex.get(str).toArray(new String[directIndex.get(str).size()]),terms,str);
 			}
 			if (counter == 0){
 				results[counter] = str;

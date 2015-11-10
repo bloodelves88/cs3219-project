@@ -421,14 +421,24 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				int rowIndex = tableFilesOpen.getSelectedRow();
 				int colIndex = tableFilesOpen.getSelectedColumn();
-
+				String[][] CVTermDetails;
 				if (colIndex == 0) {
 					String CVDetails = MainPresenter.getCVDetails(originalFiles[resultIndex[rowIndex]],resultIndex[rowIndex]);
 					textAreaCVDetails.setText(CVDetails);
 					textAreaCVDetails.setCaretPosition(0);
+					CVTermDetails= MainPresenter.getMatchedAndUnmatchedTerms(resultIndex[rowIndex]);
+					keywordsTableModel.setRowCount(0);
+					if(CVTermDetails!=null){
+					for (int i = 0; i < CVTermDetails.length; i++) {
+						System.out.println(CVTermDetails[i][1]);
+						keywordsTableModel.addRow(new Object[]{CVTermDetails[i][0], CVTermDetails[i][1], Integer.parseInt(DEFAULT_KEYWORD_WEIGHT)});
+					}
+					}
 				} else {
 					JOptionPane.showMessageDialog(frmCvia, "You have not selected a CV. Please select a CV from the table above by clicking on its entry");
 				}
+				
+				
 			}
 		});
 

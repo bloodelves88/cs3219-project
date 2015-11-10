@@ -50,4 +50,9 @@ public class MainPresenter {
 	{
 		textRetrieval.DeleteData();
 	}
+	
+	public static String[][] getMatchedAndUnmatchedTerms(int fileIndex)
+	{
+		return textRetrieval.getMatchedAndUnmatchedTerms(System.getProperty("user.dir")+"\\pdfoutput" + fileIndex + ".txt");
+	}
 }
