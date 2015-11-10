@@ -318,6 +318,7 @@ public class GUI {
 				c.setAcceptAllFileFilterUsed(false);
 				String[] extensions = {"doc", "docx", "pdf", "txt"};
 				String[] descriptions = {".doc, .docx, .pdf, .txt"};
+				c.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				c.addChoosableFileFilter(new OpenFileFilter(extensions, descriptions));
 				c.setMultiSelectionEnabled(true); // returns a array of File objects
 				if (theOutString != null) {
@@ -328,7 +329,11 @@ public class GUI {
 				if (rVal == JFileChooser.APPROVE_OPTION) {
 					File[] files = c.getSelectedFiles();
 					theOutString = files[0].getPath();
-					originalFiles = c.getSelectedFiles();
+					List<File> fileList = new ArrayList<File>();
+					fileList = iterateFiles(files, fileList);
+					files = fileList.toArray(new File[fileList.size()]);
+					originalFiles = fileList.toArray(new File[fileList.size()]);
+
 					MainPresenter.ClearData();
 					resultIndex=new int[files.length];
 					filesOpenTableModel.setRowCount(0);
@@ -524,6 +529,17 @@ public class GUI {
 		}
 	}
 
+	public List<File> iterateFiles(File[] files, List<File> fileList) {
+	    for (File file : files) {
+	        if (file.isFile()) {
+	        	fileList.add(file);
+	        } else if (file.isDirectory()) {
+	            iterateFiles(file.listFiles(), fileList);
+	        }
+	    }
+	    return fileList;
+	}             
+	
 	private void writeTextToFile(String contents, String fileName) {
 		//contents = contents.replaceAll("(?!\\r)\\n", "\r\n");
 		try {
