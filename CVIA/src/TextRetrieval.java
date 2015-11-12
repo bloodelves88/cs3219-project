@@ -2,7 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.Scanner;
+
+import org.tartarus.snowball.ext.englishStemmer;
 
 
 
@@ -200,7 +201,20 @@ public class TextRetrieval {
 		{
 			String[] termAndappearance=new String[2];
 			termAndappearance[0]=terms[i][0];
-			if(Arrays.asList(fileTerms).contains(terms[i][0].toLowerCase()))
+			String term = terms[i][0].toLowerCase();
+			if (term.contains(" ")) {
+				String[] wordArr = term.split(" ");
+				String stemResult = "";
+				for (String word : wordArr) {
+					stemResult += stem(word) + " ";
+				}
+				stemResult = stemResult.trim();
+				term = stemResult;
+			}
+			else {
+				term = stem(term);
+			}
+			if(Arrays.asList(fileTerms).contains(term))
 			{
 				commonTerms++;
 				termAndappearance[1]="Yes";
@@ -211,6 +225,16 @@ public class TextRetrieval {
 		}
 		fileAndTermsIndex.put(filename, arraylist);
 		return (commonTerms)/(fileTerms.length+terms.length-commonTerms);
+	}
+
+	private static String stem(String word) {
+		englishStemmer stemmer = new englishStemmer(); 
+		stemmer.setCurrent(word);
+		if (stemmer.stem()) {
+			return stemmer.getCurrent();
+		} else {
+			return null;
+		}
 	}
 
 	private double BasicCalculation(String[] fileTerms,String[][]terms,String filename)

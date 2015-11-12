@@ -71,8 +71,10 @@ public class WordGenerator {
 			String[] arr = null;
 
 			while (words != null) {
-				if (!(words.trim().equals(""))) {
+				words = words.trim();
+				if (!(words.equals(""))) {
 					words = words.toLowerCase();
+					words = words.replaceAll(",", "");
 					words = words.replaceAll("(\\w)\\.(\\W*)", "$1$2");
 					secondLine = words;
 
@@ -118,20 +120,19 @@ public class WordGenerator {
 
 	private static Set<String> stemWordList(List<String> wordList) {
 		List<String> stemmedLineList = new ArrayList<String>();
-		englishStemmer stemmer = new englishStemmer();
 
 		for (String line : wordList) {
 			if (line.contains(" ")) {
 				String[] wordArr = line.split(" ");
 				String stemResult = "";
 				for (String word : wordArr) {
-					stemResult += stem(stemmer, word) + " ";
+					stemResult += stem(word) + " ";
 				}
 				stemResult = stemResult.trim();
 
 				stemmedLineList.add(stemResult);
 			} else {
-				stemmedLineList.add(stem(stemmer, line));
+				stemmedLineList.add(stem(line));
 			}
 		}
 
@@ -140,7 +141,8 @@ public class WordGenerator {
 		return stemmedSet;
 	}
 
-	private static String stem(englishStemmer stemmer, String word) {
+	private static String stem(String word) {
+		englishStemmer stemmer = new englishStemmer();
 		stemmer.setCurrent(word);
 		if (stemmer.stem()) {
 			return stemmer.getCurrent();
