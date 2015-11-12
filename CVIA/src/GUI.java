@@ -405,7 +405,7 @@ public class GUI {
 				filesOpenTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
-					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], Double.parseDouble(results[i][1])*100, false});
+					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], Double.parseDouble(results[i][1])*1000, false});
 					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
 				hasClickedAnalyze = true;
@@ -497,7 +497,7 @@ public class GUI {
 		btnAddKeyword.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				keywordsTableModel.addRow(new Object[]{"", Integer.valueOf(DEFAULT_KEYWORD_WEIGHT)});	
+				keywordsTableModel.addRow(new Object[]{"", "Unknown", Integer.valueOf(DEFAULT_KEYWORD_WEIGHT)});	
 				keywordsTable.scrollRectToVisible(keywordsTable.getCellRect(keywordsTable.getRowCount()-1, 0, true));
 			}
 		});
