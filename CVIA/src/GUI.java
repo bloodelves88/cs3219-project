@@ -531,7 +531,7 @@ public class GUI {
 				//int index = comboBox.getSelectedIndex();
 				String keywords = "";
 				for (int i = 0; i < keywordsTable.getRowCount(); i++) {
-					keywords = keywords.concat((String) keywordsTable.getModel().getValueAt(i, 0) + "~" + keywordsTable.getModel().getValueAt(i, 1) + "\n");
+					keywords = keywords.concat((String) keywordsTable.getModel().getValueAt(i, 0) + "~" + keywordsTable.getModel().getValueAt(i, 2) + "\n");
 				}
 				int reply = JOptionPane.showConfirmDialog(frmCvia, "Are you sure you want to save these keywords (the previous list will be overwritten)?", "Are you sure?",  JOptionPane.YES_NO_OPTION);
 				if (reply == JOptionPane.YES_OPTION) {
