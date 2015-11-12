@@ -405,7 +405,7 @@ public class GUI {
 				filesOpenTableModel.setRowCount(0);
 				for (int i = 0; i < results.length; i++) {
 					System.out.println(results[i][1]);
-					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], results[i][1], false});
+					filesOpenTableModel.addRow(new Object[]{originalFiles[Integer.parseInt(results[i][0])], Double.parseDouble(results[i][1])*100, false});
 					resultIndex[i]=Integer.parseInt(results[i][0]);
 				}
 				hasClickedAnalyze = true;
